@@ -20,24 +20,32 @@ class RoleSeeder extends Seeder
                 'description' => 'Administrator sistem dengan akses penuh'
             ],
             [
+                'name' => 'Dosen Supervisor',
+                'slug' => 'dosen-supervisor',
+                'description' => 'Dosen yang bertugas sebagai supervisor KP'
+            ],
+            [
                 'name' => 'Dosen Biasa',
                 'slug' => 'dosen-biasa',
-                'description' => 'Dosen pengajar reguler'
+                'description' => 'Dosen yang bertugas sebagai pembimbing KP'
             ],
             [
                 'name' => 'Mahasiswa',
                 'slug' => 'mahasiswa',
-                'description' => 'Mahasiswa yang sedang menempuh pendidikan'
+                'description' => 'Mahasiswa yang mengikuti program kerja praktek'
             ],
             [
                 'name' => 'Pengawas Lapangan',
                 'slug' => 'pengawas-lapangan',
-                'description' => 'Pengawas yang melakukan pengawasan di lapangan'
+                'description' => 'Pengawas lapangan yang mengawasi mahasiswa KP di instansi'
             ]
         ];
 
         foreach ($roles as $role) {
-            Role::create($role);
+            Role::firstOrCreate(
+                ['slug' => $role['slug']],
+                $role
+            );
         }
     }
 }

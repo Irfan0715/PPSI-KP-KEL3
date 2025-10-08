@@ -57,21 +57,21 @@
                 <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
                     <h3 class="text-lg font-semibold mb-4 text-gray-800">👮‍♂️ Menu Pengawasan</h3>
                     <div class="space-y-3">
-                        <a href="{{ route('pengawas-lapangan.laporan') }}" class="flex items-center p-3 bg-blue-50 hover:bg-blue-100 text-blue-800 rounded-lg transition-colors">
+                        <a href="{{ route('pembimbing-lapangan.laporan') }}" class="flex items-center p-3 bg-blue-50 hover:bg-blue-100 text-blue-800 rounded-lg transition-colors">
                             <span class="text-xl mr-3">📋</span>
                             <div>
                                 <div class="font-medium">Laporan KP</div>
                                 <div class="text-sm text-blue-600">Review laporan mahasiswa</div>
                             </div>
                         </a>
-                        <a href="{{ route('pengawas-lapangan.jadwal-pengawasan') }}" class="flex items-center p-3 bg-green-50 hover:bg-green-100 text-green-800 rounded-lg transition-colors">
+                        <a href="{{ route('pembimbing-lapangan.jadwal-pengawasan') }}" class="flex items-center p-3 bg-green-50 hover:bg-green-100 text-green-800 rounded-lg transition-colors">
                             <span class="text-xl mr-3">📅</span>
                             <div>
                                 <div class="font-medium">Jadwal Pengawasan</div>
                                 <div class="text-sm text-green-600">Atur jadwal kunjungan</div>
                             </div>
                         </a>
-                        <a href="{{ route('pengawas-lapangan.evaluasi') }}" class="flex items-center p-3 bg-yellow-50 hover:bg-yellow-100 text-yellow-800 rounded-lg transition-colors">
+                        <a href="{{ route('pembimbing-lapangan.evaluasi') }}" class="flex items-center p-3 bg-yellow-50 hover:bg-yellow-100 text-yellow-800 rounded-lg transition-colors">
                             <span class="text-xl mr-3">📝</span>
                             <div>
                                 <div class="font-medium">Evaluasi</div>
@@ -180,7 +180,7 @@
                             <div>
                                 <p class="text-yellow-800 font-medium">Pemberitahuan Penting!</p>
                                 <p class="text-yellow-700 text-sm">Terdapat {{ $laporanMasukCount }} laporan KP yang perlu direview.</p>
-                                <a href="{{ route('pengawas-lapangan.laporan') }}" class="text-yellow-800 font-medium text-sm hover:underline">Review sekarang →</a>
+                                <a href="{{ route('pembimbing-lapangan.laporan') }}" class="text-yellow-800 font-medium text-sm hover:underline">Review sekarang →</a>
                             </div>
                         </div>
                     </div>

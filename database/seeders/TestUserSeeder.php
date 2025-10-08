@@ -25,7 +25,7 @@ class TestUserSeeder extends Seeder
         ]);
         $admin->assignRole('admin');
 
-        // Dosen Biasa
+        // Dosen Biasa (fixed role slug)
         $dosen = User::create([
             'name' => 'Dr. Budi Santoso',
             'email' => 'dosen@univ.ac.id',
@@ -57,7 +57,7 @@ class TestUserSeeder extends Seeder
         ]);
         $mahasiswa1->assignRole('mahasiswa');
 
-        // Pengawas Lapangan
+        // Pembimbing Lapangan
         $pengawas = User::create([
             'name' => 'Pak Rahman',
             'email' => 'pengawas@univ.ac.id',
@@ -65,13 +65,13 @@ class TestUserSeeder extends Seeder
             'nip' => '197501011234567890',
             'email_verified_at' => now(),
         ]);
-        $pengawas->assignRole('pengawas-lapangan');
+        $pengawas->assignRole('pembimbing-lapangan');
 
         $this->command->info('Test users created successfully!');
         $this->command->info('Email: admin@univ.ac.id | Password: password123 | Role: Admin');
-        $this->command->info('Email: dosen@univ.ac.id | Password: password123 | Role: Dosen Biasa');
+        $this->command->info('Email: dosen@univ.ac.id | Password: password123 | Role: Dosen Pembimbing');
         $this->command->info('Email: mahasiswa@univ.ac.id | Password: password123 | Role: Mahasiswa');
         $this->command->info('Email: mahasiswa1@univ.ac.id | Password: password123 | Role: Mahasiswa');
-        $this->command->info('Email: pengawas@univ.ac.id | Password: password123 | Role: Pengawas Lapangan');
+        $this->command->info('Email: pengawas@univ.ac.id | Password: password123 | Role: Pembimbing Lapangan');
     }
 }

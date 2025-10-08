@@ -32,9 +32,9 @@ class AuthenticatedSessionController extends Controller
         $user = auth()->user();
         $redirectRoutes = [
             'admin' => 'admin.dashboard',
-            'dosen-biasa' => 'dosen-biasa.dashboard',
+            'dosen-pembimbing' => 'dosen-pembimbing.dashboard',
             'mahasiswa' => 'mahasiswa.dashboard',
-            'pengawas-lapangan' => 'pengawas-lapangan.dashboard',
+            'pembimbing-lapangan' => 'pembimbing-lapangan.dashboard',
         ];
 
         foreach ($redirectRoutes as $role => $route) {

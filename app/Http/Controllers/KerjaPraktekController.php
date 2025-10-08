@@ -25,7 +25,7 @@ class KerjaPraktekController extends Controller
             $kerjaPrakteks = KerjaPraktek::with(['mahasiswa', 'instansi', 'dosenPembimbing', 'pengawasLapangan'])
                 ->orderBy('created_at', 'desc')
                 ->paginate(15);
-        } elseif ($user->hasRole('dosen')) {
+        } elseif ($user->hasRole('dosen-pembimbing')) {
             $kerjaPrakteks = KerjaPraktek::with(['mahasiswa', 'instansi', 'pengawasLapangan'])
                 ->where('dosen_pembimbing_id', $user->id)
                 ->orderBy('created_at', 'desc')
@@ -399,7 +399,7 @@ class KerjaPraktekController extends Controller
         $user = Auth::user();
 
         return $user->hasRole('admin') ||
-               ($user->hasRole('dosen') && $kerjaPraktek->dosen_pembimbing_id === $user->id);
+               ($user->hasRole('dosen-pembimbing') && $kerjaPraktek->dosen_pembimbing_id === $user->id);
     }
 
     private function canManageKerjaPraktek(KerjaPraktek $kerjaPraktek)

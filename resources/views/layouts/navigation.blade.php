@@ -14,11 +14,36 @@
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     @auth
                         @if(auth()->user()->hasRole('admin'))
-                            <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
+                            <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                                 {{ __('Dashboard Admin') }}
                             </x-nav-link>
                             <x-nav-link :href="route('admin.users')" :active="request()->routeIs('admin.users')">
                                 {{ __('Kelola Pengguna') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('admin.instansi.index')" :active="request()->routeIs('admin.instansi.*')">
+                                {{ __('Kelola Instansi') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('admin.lowongan.index')" :active="request()->routeIs('admin.lowongan.*')">
+                                {{ __('Kelola Lowongan KP') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('admin.alokasi.pembimbing')" :active="request()->routeIs('admin.alokasi.*')">
+                                {{ __('Alokasi Dosen') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('admin.monitoring')" :active="request()->routeIs('admin.monitoring')">
+                                {{ __('Monitoring & Laporan') }}
+                            </x-nav-link>
+                        @elseif(auth()->user()->hasRole('dosen-pembimbing'))
+                            <x-nav-link :href="route('dosen-pembimbing.dashboard')" :active="request()->routeIs('dosen-pembimbing.*')">
+                                {{ __('Dashboard Dosen') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('dosen-pembimbing.jadwal')" :active="request()->routeIs('dosen-pembimbing.jadwal')">
+                                {{ __('Jadwal Mengajar') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('dosen-pembimbing.materi')" :active="request()->routeIs('dosen-pembimbing.materi')">
+                                {{ __('Materi Kuliah') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('kerja-praktek.index')" :active="request()->routeIs('kerja-praktek.*')">
+                                {{ __('Daftar KP') }}
                             </x-nav-link>
                         @elseif(auth()->user()->hasRole('dosen-biasa'))
                             <x-nav-link :href="route('dosen-biasa.dashboard')" :active="request()->routeIs('dosen-biasa.*')">
@@ -34,7 +59,7 @@
                                 {{ __('Daftar KP') }}
                             </x-nav-link>
                         @elseif(auth()->user()->hasRole('mahasiswa'))
-                            <x-nav-link :href="route('mahasiswa.dashboard')" :active="request()->routeIs('mahasiswa.*')">
+                            <x-nav-link :href="route('mahasiswa.dashboard')" :active="request()->routeIs('mahasiswa.dashboard')">
                                 {{ __('Dashboard Mahasiswa') }}
                             </x-nav-link>
                             <x-nav-link :href="route('kerja-praktek.create')" :active="request()->routeIs('kerja-praktek.create')">
@@ -43,20 +68,26 @@
                             <x-nav-link :href="route('kerja-praktek.index')" :active="request()->routeIs('kerja-praktek.index')">
                                 {{ __('Status KP') }}
                             </x-nav-link>
-                            <x-nav-link :href="route('mahasiswa.profil')" :active="request()->routeIs('mahasiswa.profil')">
+                            <x-nav-link :href="route('mahasiswa.nilai')" :active="request()->routeIs('mahasiswa.nilai')">
+                                {{ __('Hasil KP') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('mahasiswa.kuesioner.index')" :active="request()->routeIs('mahasiswa.kuesioner.*')">
+                                {{ __('Kuesioner') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('profile.edit')" :active="request()->routeIs('profile.edit')">
                                 {{ __('Profil') }}
                             </x-nav-link>
-                        @elseif(auth()->user()->hasRole('pengawas-lapangan'))
-                            <x-nav-link :href="route('pengawas-lapangan.dashboard')" :active="request()->routeIs('pengawas-lapangan.*')">
+                        @elseif(auth()->user()->hasRole('pembimbing-lapangan'))
+                            <x-nav-link :href="route('pembimbing-lapangan.dashboard')" :active="request()->routeIs('pembimbing-lapangan.*')">
                                 {{ __('Dashboard Pengawas') }}
                             </x-nav-link>
-                            <x-nav-link :href="route('pengawas-lapangan.laporan')" :active="request()->routeIs('pengawas-lapangan.laporan')">
+                            <x-nav-link :href="route('pembimbing-lapangan.laporan')" :active="request()->routeIs('pembimbing-lapangan.laporan')">
                                 {{ __('Laporan KP') }}
                             </x-nav-link>
-                            <x-nav-link :href="route('pengawas-lapangan.jadwal-pengawasan')" :active="request()->routeIs('pengawas-lapangan.jadwal-pengawasan')">
+                            <x-nav-link :href="route('pembimbing-lapangan.jadwal-pengawasan')" :active="request()->routeIs('pembimbing-lapangan.jadwal-pengawasan')">
                                 {{ __('Jadwal Pengawasan') }}
                             </x-nav-link>
-                            <x-nav-link :href="route('pengawas-lapangan.evaluasi')" :active="request()->routeIs('pengawas-lapangan.evaluasi')">
+                            <x-nav-link :href="route('pembimbing-lapangan.evaluasi')" :active="request()->routeIs('pembimbing-lapangan.evaluasi')">
                                 {{ __('Evaluasi') }}
                             </x-nav-link>
                             <x-nav-link :href="route('kerja-praktek.index')" :active="request()->routeIs('kerja-praktek.*')">
@@ -123,20 +154,32 @@
         <div class="pt-2 pb-3 space-y-1">
             @auth
                 @if(auth()->user()->hasRole('admin'))
-                    <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
+                    <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                         {{ __('Dashboard Admin') }}
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('admin.users')" :active="request()->routeIs('admin.users')">
                         {{ __('Kelola Pengguna') }}
                     </x-responsive-nav-link>
-                @elseif(auth()->user()->hasRole('dosen-biasa'))
-                    <x-responsive-nav-link :href="route('dosen-biasa.dashboard')" :active="request()->routeIs('dosen-biasa.*')">
+                    <x-responsive-nav-link :href="route('admin.instansi.index')" :active="request()->routeIs('admin.instansi.*')">
+                        {{ __('Kelola Instansi') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('admin.lowongan.index')" :active="request()->routeIs('admin.lowongan.*')">
+                        {{ __('Kelola Lowongan KP') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('admin.alokasi.pembimbing')" :active="request()->routeIs('admin.alokasi.*')">
+                        {{ __('Alokasi Dosen') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('admin.monitoring')" :active="request()->routeIs('admin.monitoring')">
+                        {{ __('Monitoring & Laporan') }}
+                    </x-responsive-nav-link>
+                @elseif(auth()->user()->hasRole('dosen-pembimbing'))
+                    <x-responsive-nav-link :href="route('dosen-pembimbing.dashboard')" :active="request()->routeIs('dosen-pembimbing.*')">
                         {{ __('Dashboard Dosen') }}
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('dosen-biasa.jadwal')" :active="request()->routeIs('dosen-biasa.jadwal')">
+                    <x-responsive-nav-link :href="route('dosen-pembimbing.jadwal')" :active="request()->routeIs('dosen-pembimbing.jadwal')">
                         {{ __('Jadwal Mengajar') }}
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('dosen-biasa.materi')" :active="request()->routeIs('dosen-biasa.materi')">
+                    <x-responsive-nav-link :href="route('dosen-pembimbing.materi')" :active="request()->routeIs('dosen-pembimbing.materi')">
                         {{ __('Materi Kuliah') }}
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('kerja-praktek.index')" :active="request()->routeIs('kerja-praktek.*')">
@@ -152,20 +195,26 @@
                     <x-responsive-nav-link :href="route('kerja-praktek.index')" :active="request()->routeIs('kerja-praktek.index')">
                         {{ __('Status KP') }}
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('mahasiswa.profil')" :active="request()->routeIs('mahasiswa.profil')">
+                    <x-responsive-nav-link :href="route('mahasiswa.nilai')" :active="request()->routeIs('mahasiswa.nilai')">
+                        {{ __('Hasil KP') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('mahasiswa.kuesioner.index')" :active="request()->routeIs('mahasiswa.kuesioner.*')">
+                        {{ __('Kuesioner') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('profile.edit')" :active="request()->routeIs('profile.edit')">
                         {{ __('Profil') }}
                     </x-responsive-nav-link>
-                @elseif(auth()->user()->hasRole('pengawas-lapangan'))
-                    <x-responsive-nav-link :href="route('pengawas-lapangan.dashboard')" :active="request()->routeIs('pengawas-lapangan.*')">
+                @elseif(auth()->user()->hasRole('pembimbing-lapangan'))
+                    <x-responsive-nav-link :href="route('pembimbing-lapangan.dashboard')" :active="request()->routeIs('pembimbing-lapangan.*')">
                         {{ __('Dashboard Pengawas') }}
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('pengawas-lapangan.laporan')" :active="request()->routeIs('pengawas-lapangan.laporan')">
+                    <x-responsive-nav-link :href="route('pembimbing-lapangan.laporan')" :active="request()->routeIs('pembimbing-lapangan.laporan')">
                         {{ __('Laporan KP') }}
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('pengawas-lapangan.jadwal-pengawasan')" :active="request()->routeIs('pengawas-lapangan.jadwal-pengawasan')">
+                    <x-responsive-nav-link :href="route('pembimbing-lapangan.jadwal-pengawasan')" :active="request()->routeIs('pembimbing-lapangan.jadwal-pengawasan')">
                         {{ __('Jadwal Pengawasan') }}
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('pengawas-lapangan.evaluasi')" :active="request()->routeIs('pengawas-lapangan.evaluasi')">
+                    <x-responsive-nav-link :href="route('pembimbing-lapangan.evaluasi')" :active="request()->routeIs('pembimbing-lapangan.evaluasi')">
                         {{ __('Evaluasi') }}
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('kerja-praktek.index')" :active="request()->routeIs('kerja-praktek.*')">

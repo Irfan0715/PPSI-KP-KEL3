@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\KerjaPraktek;
 
-class DosenBiasaController extends Controller
+class DosenPembimbingController extends Controller
 {
     public function dashboard()
     {
@@ -15,7 +15,7 @@ class DosenBiasaController extends Controller
         })->count();
 
         $totalDosen = User::whereHas('roles', function($query) {
-            $query->where('slug', 'dosen-biasa');
+            $query->where('slug', 'dosen-pembimbing');
         })->count();
 
         // KP Statistics for Dosen
@@ -39,7 +39,7 @@ class DosenBiasaController extends Controller
             ->limit(6)
             ->get();
 
-        return view('dosen-biasa.dashboard', compact(
+        return view('dosen-pembimbing.dashboard', compact(
             'totalMahasiswa',
             'totalDosen',
             'kpMembimbingCount',
@@ -52,12 +52,12 @@ class DosenBiasaController extends Controller
     public function jadwal()
     {
         // Placeholder untuk fitur jadwal mengajar
-        return view('dosen-biasa.jadwal');
+        return view('dosen-pembimbing.jadwal');
     }
 
     public function materi()
     {
         // Placeholder untuk fitur materi kuliah
-        return view('dosen-biasa.materi');
+        return view('dosen-pembimbing.materi');
     }
 }

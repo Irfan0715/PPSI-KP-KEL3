@@ -57,14 +57,14 @@
                 <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
                     <h3 class="text-lg font-semibold mb-4 text-gray-800">🎓 Menu Akademik</h3>
                     <div class="space-y-3">
-                        <a href="{{ route('dosen-biasa.jadwal') }}" class="flex items-center p-3 bg-blue-50 hover:bg-blue-100 text-blue-800 rounded-lg transition-colors">
+                        <a href="{{ route('dosen-pembimbing.jadwal') }}" class="flex items-center p-3 bg-blue-50 hover:bg-blue-100 text-blue-800 rounded-lg transition-colors">
                             <span class="text-xl mr-3">📅</span>
                             <div>
                                 <div class="font-medium">Jadwal Mengajar</div>
                                 <div class="text-sm text-blue-600">Kelola jadwal perkuliahan</div>
                             </div>
                         </a>
-                        <a href="{{ route('dosen-biasa.materi') }}" class="flex items-center p-3 bg-green-50 hover:bg-green-100 text-green-800 rounded-lg transition-colors">
+                        <a href="{{ route('dosen-pembimbing.materi') }}" class="flex items-center p-3 bg-green-50 hover:bg-green-100 text-green-800 rounded-lg transition-colors">
                             <span class="text-xl mr-3">📚</span>
                             <div>
                                 <div class="font-medium">Materi Kuliah</div>

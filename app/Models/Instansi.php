@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
 
 class Instansi extends Model
 {
@@ -12,49 +13,43 @@ class Instansi extends Model
     protected $fillable = [
         'nama_instansi',
         'alamat',
+        'kontak',
+        'telepon',
+        'kontak_person',
+        'jenis_instansi',
         'kota',
         'provinsi',
         'kode_pos',
-        'telepon',
         'email',
         'website',
-        'jenis_instansi',
-        'deskripsi',
-        'kontak_person',
-        'jabatan_kontak',
-        'no_hp_kontak',
-        'kuota_mahasiswa',
-        'kebutuhan_keahlian',
+        'status',
         'status_aktif',
-        'fasilitas'
     ];
 
     protected $casts = [
-        'fasilitas' => 'array',
-        'status_aktif' => 'boolean'
+        'status' => 'boolean',
     ];
 
-    // Relationship dengan KP (akan dibuat nanti)
-    public function kerjaPrakteks()
+    public function lowonganKPs()
     {
-        return $this->hasMany(KerjaPraktek::class);
+        return $this->hasMany(LowonganKP::class);
+    }
+
+    public function kuotas()
+    {
+        return $this->hasMany(Kuota::class);
     }
 
     // Scope untuk instansi aktif
     public function scopeAktif($query)
     {
-        return $query->where('status_aktif', true);
-    }
-
-    // Scope untuk mencari berdasarkan jenis instansi
-    public function scopeByJenis($query, $jenis)
-    {
-        return $query->where('jenis_instansi', $jenis);
-    }
-
-    // Scope untuk mencari berdasarkan lokasi
-    public function scopeByLokasi($query, $kota)
-    {
-        return $query->where('kota', $kota);
+        $table = $this->getTable();
+        if (Schema::hasColumn($table, 'status')) {
+            return $query->where('status', true);
+        }
+        if (Schema::hasColumn($table, 'status_aktif')) {
+            return $query->where('status_aktif', true);
+        }
+        return $query; // fallback: tidak filter jika kolom tidak ada
     }
 }

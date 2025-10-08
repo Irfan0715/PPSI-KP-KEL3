@@ -11,13 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('instansis', function (Blueprint $table) {
-            $table->id();
-            $table->string('nama_instansi');
-            $table->text('alamat');
-            $table->string('kontak');
-            $table->boolean('status')->default(true);
-            $table->timestamps();
+        Schema::table('users', function (Blueprint $table) {
+            $table->enum('role', ['admin', 'mahasiswa', 'dosen', 'pembimbing_lapangan'])->default('mahasiswa')->after('password');
         });
     }
 
@@ -26,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('instansis');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('role');
+        });
     }
 };

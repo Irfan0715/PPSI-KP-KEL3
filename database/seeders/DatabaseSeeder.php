@@ -25,5 +25,8 @@ class DatabaseSeeder extends Seeder
 
         // Jalankan TestUserSeeder untuk membuat user test
         $this->call(TestUserSeeder::class);
+
+        // Seed contoh Instansi dan Lowongan
+        $this->call(InstansiLowonganSeeder::class);
     }
 }

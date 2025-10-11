@@ -25,7 +25,7 @@ class KerjaPraktekController extends Controller
             $kerjaPrakteks = KerjaPraktek::with(['mahasiswa', 'instansi', 'dosenPembimbing', 'pengawasLapangan'])
                 ->orderBy('created_at', 'desc')
                 ->paginate(15);
-        } elseif ($user->hasRole('dosen-pembimbing')) {
+        } elseif ($user->hasRole('dosen-biasa')) {
             $kerjaPrakteks = KerjaPraktek::with(['mahasiswa', 'instansi', 'pengawasLapangan'])
                 ->where('dosen_pembimbing_id', $user->id)
                 ->orderBy('created_at', 'desc')
@@ -236,7 +236,7 @@ class KerjaPraktekController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user->hasAnyRole(['admin', 'dosen']) || !$this->canApproveKerjaPraktek($kerjaPraktek)) {
+        if (!$user->hasAnyRole(['admin', 'dosen-biasa']) || !$this->canApproveKerjaPraktek($kerjaPraktek)) {
             abort(403, 'Tidak memiliki akses untuk menyetujui');
         }
 
@@ -252,7 +252,7 @@ class KerjaPraktekController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user->hasAnyRole(['admin', 'dosen']) || !$this->canApproveKerjaPraktek($kerjaPraktek)) {
+        if (!$user->hasAnyRole(['admin', 'dosen-biasa']) || !$this->canApproveKerjaPraktek($kerjaPraktek)) {
             abort(403, 'Tidak memiliki akses untuk menolak');
         }
 
@@ -399,7 +399,7 @@ class KerjaPraktekController extends Controller
         $user = Auth::user();
 
         return $user->hasRole('admin') ||
-               ($user->hasRole('dosen-pembimbing') && $kerjaPraktek->dosen_pembimbing_id === $user->id);
+               ($user->hasRole('dosen-biasa') && $kerjaPraktek->dosen_pembimbing_id === $user->id);
     }
 
     private function canManageKerjaPraktek(KerjaPraktek $kerjaPraktek)

@@ -12,15 +12,19 @@ class DosenController extends Controller
 {
     public function dashboard()
     {
-        $dosen = auth()->user()->dosen;
-        return view('dosen.dashboard', compact('dosen'));
+        $userId = auth()->id();
+        $totalMahasiswa = \App\Models\KerjaPraktek::where('dosen_pembimbing_id', $userId)->distinct('mahasiswa_id')->count('mahasiswa_id');
+        $kpMembimbingCount = \App\Models\KerjaPraktek::where('dosen_pembimbing_id', $userId)->count();
+        $pendingApprovalsCount = \App\Models\KerjaPraktek::where('dosen_pembimbing_id', $userId)->where('status','diajukan')->count();
+        $completedKpCount = \App\Models\KerjaPraktek::where('dosen_pembimbing_id', $userId)->where('status','selesai')->count();
+
+        return view('dosen.dashboard', compact('totalMahasiswa','kpMembimbingCount','pendingApprovalsCount','completedKpCount'));
     }
 
     // CRUD Proposal (review dan approval)
     public function indexProposal()
     {
-        $dosen = auth()->user()->dosen;
-        $proposals = Proposal::where('dosen_id', $dosen->id)->get();
+        $proposals = Proposal::where('dosen_id', auth()->id())->get();
         return view('dosen.proposal.index', compact('proposals'));
     }
 
@@ -44,8 +48,13 @@ class DosenController extends Controller
     // CRUD Bimbingan (jadwal dan catatan)
     public function indexBimbingan()
     {
-        $dosen = auth()->user()->dosen;
-        $bimbingans = $dosen->bimbingans;
+        $bimbingans = Bimbingan::query()
+            ->where(function($q){
+                $uid = auth()->id();
+                $q->where('dosen_pembimbing_id',$uid)->orWhere('dosen_id',$uid);
+            })
+            ->orderByDesc('created_at')
+            ->get();
         return view('dosen.bimbingan.index', compact('bimbingans'));
     }
 
@@ -69,8 +78,7 @@ class DosenController extends Controller
     // CRUD Nilai (penilaian mahasiswa)
     public function indexNilai()
     {
-        $dosen = auth()->user()->dosen;
-        $nilais = $dosen->nilais;
+        $nilais = Nilai::where('dosen_id', auth()->id())->orderByDesc('created_at')->get();
         return view('dosen.nilai.index', compact('nilais'));
     }
 
@@ -90,11 +98,9 @@ class DosenController extends Controller
             'total_nilai' => 'nullable|numeric|min:0|max:100',
         ]);
 
-        $dosen = auth()->user()->dosen;
-
         Nilai::create([
             'mahasiswa_id' => $validated['mahasiswa_id'],
-            'dosen_id' => $dosen->id,
+            'dosen_id' => auth()->id(),
             'pembimbing_lapangan_id' => $validated['pembimbing_lapangan_id'],
             'nilai_pembimbing' => $validated['nilai_pembimbing'],
             'nilai_lapangan' => $validated['nilai_lapangan'],
@@ -130,5 +136,29 @@ class DosenController extends Controller
         return redirect()->route('dosen.nilai.index')->with('success', 'Nilai berhasil dihapus.');
     }
 
-    // TODO: Seminar penguji
+    public function indexSeminar()
+    {
+        $uid = auth()->id();
+        $seminars = \App\Models\Seminar::where(function($q) use ($uid){
+            $q->where('ketua_penguji_id',$uid)
+              ->orWhere('anggota_penguji_1_id',$uid)
+              ->orWhere('anggota_penguji_2_id',$uid)
+              ->orWhere('pembimbing_penguji_id',$uid);
+        })->orderByDesc('tanggal_seminar')->get();
+        return view('dosen.seminar.index', compact('seminars'));
+    }
+
+    public function updateSeminar(Request $request, \App\Models\Seminar $seminar)
+    {
+        $validated = $request->validate([
+            'nilai_ketua_penguji' => 'nullable|numeric|min:0|max:100',
+            'nilai_anggota_1' => 'nullable|numeric|min:0|max:100',
+            'nilai_anggota_2' => 'nullable|numeric|min:0|max:100',
+            'nilai_pembimbing' => 'nullable|numeric|min:0|max:100',
+            'catatan_penilaian' => 'nullable|string',
+        ]);
+        $seminar->update($validated);
+        $seminar->hitungNilaiAkhir();
+        return back()->with('success','Penilaian seminar diperbarui');
+    }
 }

@@ -1,79 +1,76 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Dashboard Mahasiswa</h2>
-            <div class="text-sm text-gray-600">Selamat datang, {{ auth()->user()->name }}!</div>
-        </div>
-    </x-slot>
-
-    <div class="py-10">
+    <div class="py-10 bg-gray-50 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
-            <!-- Ringkasan -->
-            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <div class="rounded-xl p-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow">
-                    <div class="text-sm opacity-90">KP Aktif</div>
-                    <div class="mt-1 text-3xl font-bold">{{ $kpAktifCount ?? 0 }}</div>
+            <!-- Header -->
+            <header class="flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-gray-900">Dashboard Mahasiswa</h2>
+                <span class="text-gray-600">Selamat datang, {{ auth()->user()->nama }}!</span>
+            </header>
+
+            <!-- Statistik -->
+            <div class="flex flex-wrap gap-6 justify-between">
+                <div class="flex items-center bg-blue-500 text-white p-5 rounded-xl shadow-md space-x-4 flex-1 min-w-[200px]">
+                    <div class="text-4xl">🎓</div>
+                    <div>
+                        <p class="text-3xl font-bold">{{ $kpAktifCount ?? 0 }}</p>
+                        <p class="text-sm">KP Aktif</p>
+                    </div>
                 </div>
-                <div class="rounded-xl p-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow">
-                    <div class="text-sm opacity-90">Sesi Bimbingan</div>
-                    <div class="mt-1 text-3xl font-bold">{{ $bimbinganCount ?? 0 }}</div>
+                <div class="flex items-center bg-green-500 text-white p-5 rounded-xl shadow-md space-x-4 flex-1 min-w-[200px]">
+                    <div class="text-4xl">📝</div>
+                    <div>
+                        <p class="text-3xl font-bold">{{ $bimbinganCount ?? 0 }}</p>
+                        <p class="text-sm">Sesi Bimbingan</p>
+                    </div>
                 </div>
-                <div class="rounded-xl p-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow">
-                    <div class="text-sm opacity-90">Laporan Terunggah</div>
-                    <div class="mt-1 text-3xl font-bold">{{ $laporanCount ?? 0 }}</div>
+                <div class="flex items-center bg-yellow-300 text-white p-5 rounded-xl shadow-md space-x-4 flex-1 min-w-[200px]">
+                    <div class="text-4xl">📄</div>
+                    <div>
+                        <p class="text-3xl font-bold text-gray-900">{{ $laporanCount ?? 0 }}</p>
+                        <p class="text-sm text-gray-900">Laporan Terunggah</p>
+                    </div>
                 </div>
-                <div class="rounded-xl p-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow">
-                    <div class="text-sm opacity-90">Seminar</div>
-                    <div class="mt-1 text-3xl font-bold">{{ $seminarCount ?? 0 }}</div>
+                <div class="flex items-center bg-purple-500 text-white p-5 rounded-xl shadow-md space-x-4 flex-1 min-w-[200px]">
+                    <div class="text-4xl">✅</div>
+                    <div>
+                        <p class="text-3xl font-bold">{{ $seminarCount ?? 0 }}</p>
+                        <p class="text-sm">Seminar</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Menu fitur A–G (2x2 center) -->
-            <div class="max-w-5xl mx-auto">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <a href="{{ route('kerja-praktek.create') }}" class="group rounded-2xl p-5 bg-white border border-gray-200 shadow-sm hover:shadow-md transition">
-                        <div class="font-semibold text-gray-900">Daftar KP Baru</div>
-                        <div class="text-sm text-gray-600">Pilih instansi dari daftar atau ajukan baru</div>
-                        <div class="mt-3 text-blue-600 text-sm group-hover:underline">Mulai pendaftaran →</div>
+            <!-- Menu Akademik & KP -->
+            <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
+                <!-- Menu KP -->
+                <div class="bg-white rounded-xl shadow-md p-6 space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                        <span>🗂️</span> <span>Menu Kerja Praktek</span>
+                    </h3>
+                    <a href="{{ route('kerja-praktek.create') }}" class="block p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition">
+                        <p class="font-medium text-purple-700">Daftar KP Baru</p>
+                        <p class="text-sm text-purple-600">Ajukan atau pilih instansi KP</p>
                     </a>
-                    <a href="{{ route('kerja-praktek.index') }}" class="group rounded-2xl p-5 bg-white border border-gray-200 shadow-sm hover:shadow-md transition">
-                        <div class="font-semibold text-gray-900">Status & Perubahan Pendaftaran</div>
-                        <div class="text-sm text-gray-600">Lihat atau ubah pengajuan KP</div>
-                        <div class="mt-3 text-blue-600 text-sm group-hover:underline">Buka daftar KP →</div>
-                    </a>
-                    <a href="{{ route('kerja-praktek.create') }}" class="group rounded-2xl p-5 bg-white border border-gray-200 shadow-sm hover:shadow-md transition">
-                        <div class="font-semibold text-gray-900">Ajukan Judul & Proposal</div>
-                        <div class="text-sm text-gray-600">Isi judul KP dan unggah proposal</div>
-                        <div class="mt-3 text-blue-600 text-sm group-hover:underline">Ajukan proposal →</div>
-                    </a>
-                    <a href="{{ route('kerja-praktek.index') }}" class="group rounded-2xl p-5 bg-white border border-gray-200 shadow-sm hover:shadow-md transition">
-                        <div class="font-semibold text-gray-900">Bimbingan & Laporan Akhir</div>
-                        <div class="text-sm text-gray-600">Catat bimbingan dan unggah laporan/lembar pengesahan</div>
-                        <div class="mt-3 text-blue-600 text-sm group-hover:underline">Kelola berkas KP →</div>
+                    <a href="{{ route('kerja-praktek.index') }}" class="block p-4 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition">
+                        <p class="font-medium text-yellow-700">Status & Perubahan</p>
+                        <p class="text-sm text-yellow-600">Lihat atau ubah pengajuan KP</p>
                     </a>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <a href="{{ route('mahasiswa.nilai') }}" class="block rounded-2xl p-6 bg-white border border-gray-200 shadow-sm hover:shadow-md transition">
-                    <div class="font-semibold text-gray-900">Hasil KP</div>
-                    <div class="text-sm text-gray-600">Lihat hasil penilaian setelah seminar</div>
-                    <div class="mt-3 text-blue-600 text-sm">Lihat nilai →</div>
-                </a>
-                <a href="{{ route('mahasiswa.kuesioner.index') }}" class="block rounded-2xl p-6 bg-white border border-gray-200 shadow-sm hover:shadow-md transition">
-                    <div class="font-semibold text-gray-900">Kuesioner KP</div>
-                    <div class="text-sm text-gray-600">Isi/ubah survei kepuasan pelaksanaan KP</div>
-                    <div class="mt-3 text-blue-600 text-sm">Buka kuesioner →</div>
-                </a>
-            </div>
-
-            <div class="text-right">
-                <form method="POST" action="{{ route('logout') }}" class="inline">
-                    @csrf
-                    <button class="text-sm text-gray-500 hover:text-red-600 hover:underline">Keluar dari sistem</button>
-                </form>
+            <!-- Informasi & Pengumuman -->
+            <div class="bg-white rounded-xl shadow-md p-6 space-y-4">
+                <h3 class="text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                    <span>📢</span> <span>Informasi & Pengumuman</span>
+                </h3>
+                <div class="p-4 bg-blue-50 rounded-lg border border-blue-100">
+                    <p class="font-semibold text-blue-700">Selamat datang di dashboard Mahasiswa!</p>
+                    <p class="text-sm text-blue-600">Gunakan menu di atas untuk mengakses fitur KP dan bimbingan.</p>
+                </div>
+                <div class="p-4 bg-green-50 rounded-lg border border-green-100">
+                    <p class="font-semibold text-green-700">Belum ada bimbingan aktif</p>
+                    <p class="text-sm text-green-600">Sistem akan menampilkan bimbingan setelah ada pengajuan KP disetujui.</p>
+                </div>
             </div>
         </div>
     </div>
 </x-app-layout>
-

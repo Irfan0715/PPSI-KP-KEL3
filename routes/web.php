@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminController;
@@ -14,8 +14,9 @@ Route::get('/', function () {
         $redirectRoutes = [
             'admin' => 'admin.dashboard',
             'mahasiswa' => 'mahasiswa.dashboard',
-            'dosen' => 'dosen.dashboard',
+            'dosen-biasa' => 'dosen.dashboard',
             'pembimbing_lapangan' => 'lapangan.dashboard',
+            'pembimbing-lapangan' => 'lapangan.dashboard',
         ];
 
         foreach ($redirectRoutes as $role => $route) {
@@ -133,7 +134,7 @@ Route::middleware(['auth', 'role:mahasiswa'])->prefix('mahasiswa')->name('mahasi
 });
 
 // Dosen routes
-Route::middleware(['auth', 'role:dosen'])->prefix('dosen')->name('dosen.')->group(function () {
+Route::middleware(['auth', 'role:dosen-biasa'])->prefix('dosen')->name('dosen.')->group(function () {
     Route::get('/dashboard', [DosenController::class, 'dashboard'])->name('dashboard');
 
     // Proposal management
@@ -157,16 +158,29 @@ Route::middleware(['auth', 'role:dosen'])->prefix('dosen')->name('dosen.')->grou
 });
 
 // Pembimbing Lapangan routes
-Route::middleware(['auth', 'role:pembimbing_lapangan'])->prefix('lapangan')->name('lapangan.')->group(function () {
+Route::middleware(['auth', 'role:pembimbing_lapangan,pembimbing-lapangan'])->prefix('lapangan')->name('lapangan.')->group(function () {
     Route::get('/dashboard', [PembimbingLapanganController::class, 'dashboard'])->name('dashboard');
 
     // Nilai management
+    // Nilai management
     Route::get('/nilai', [PembimbingLapanganController::class, 'indexNilai'])->name('nilai.index');
+    Route::get('/nilai/create', [PembimbingLapanganController::class, 'createNilai'])->name('nilai.create');
+    Route::post('/nilai', [PembimbingLapanganController::class, 'storeNilai'])->name('nilai.store');
     Route::get('/nilai/{nilai}/edit', [PembimbingLapanganController::class, 'editNilai'])->name('nilai.edit');
     Route::put('/nilai/{nilai}', [PembimbingLapanganController::class, 'updateNilai'])->name('nilai.update');
-
-    // Kuesioner management
     Route::get('/kuesioner', [PembimbingLapanganController::class, 'indexKuesioner'])->name('kuesioner.index');
+    Route::get('/kuesioner/create', [PembimbingLapanganController::class, 'createKuesioner'])->name('kuesioner.create');
+    Route::post('/kuesioner', [PembimbingLapanganController::class, 'storeKuesioner'])->name('kuesioner.store');
+    Route::get('/kuesioner/{kuesioner}', [PembimbingLapanganController::class, 'showKuesioner'])->name('kuesioner.show');
+    Route::get('/kuesioner/{kuesioner}/edit', [PembimbingLapanganController::class, 'editKuesioner'])->name('kuesioner.edit');
+    Route::put('/kuesioner/{kuesioner}', [PembimbingLapanganController::class, 'updateKuesioner'])->name('kuesioner.update');
+
+    // Kuota tahun depan
+    Route::get('/kuota', [PembimbingLapanganController::class, 'indexKuota'])->name('kuota.index');
+    Route::get('/kuota/create', [PembimbingLapanganController::class, 'createKuota'])->name('kuota.create');
+    Route::post('/kuota', [PembimbingLapanganController::class, 'storeKuota'])->name('kuota.store');
+    Route::get('/kuota/{kuota}/edit', [PembimbingLapanganController::class, 'editKuota'])->name('kuota.edit');
+    Route::put('/kuota/{kuota}', [PembimbingLapanganController::class, 'updateKuota'])->name('kuota.update');
     Route::get('/kuesioner/{kuesioner}', [PembimbingLapanganController::class, 'showKuesioner'])->name('kuesioner.show');
 });
 

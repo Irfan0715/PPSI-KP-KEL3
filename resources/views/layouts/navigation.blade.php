@@ -32,28 +32,9 @@
                             <x-nav-link :href="route('admin.monitoring')" :active="request()->routeIs('admin.monitoring')">
                                 {{ __('Monitoring & Laporan') }}
                             </x-nav-link>
-                        @elseif(auth()->user()->hasRole('dosen-pembimbing'))
-                            <x-nav-link :href="route('dosen-pembimbing.dashboard')" :active="request()->routeIs('dosen-pembimbing.*')">
-                                {{ __('Dashboard Dosen') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('dosen-pembimbing.jadwal')" :active="request()->routeIs('dosen-pembimbing.jadwal')">
-                                {{ __('Jadwal Mengajar') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('dosen-pembimbing.materi')" :active="request()->routeIs('dosen-pembimbing.materi')">
-                                {{ __('Materi Kuliah') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('kerja-praktek.index')" :active="request()->routeIs('kerja-praktek.*')">
-                                {{ __('Daftar KP') }}
-                            </x-nav-link>
                         @elseif(auth()->user()->hasRole('dosen-biasa'))
-                            <x-nav-link :href="route('dosen-biasa.dashboard')" :active="request()->routeIs('dosen-biasa.*')">
+                            <x-nav-link :href="route('dosen.dashboard')" :active="request()->routeIs('dosen.*')">
                                 {{ __('Dashboard Dosen') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('dosen-biasa.jadwal')" :active="request()->routeIs('dosen-biasa.jadwal')">
-                                {{ __('Jadwal Mengajar') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('dosen-biasa.materi')" :active="request()->routeIs('dosen-biasa.materi')">
-                                {{ __('Materi Kuliah') }}
                             </x-nav-link>
                             <x-nav-link :href="route('kerja-praktek.index')" :active="request()->routeIs('kerja-praktek.*')">
                                 {{ __('Daftar KP') }}
@@ -172,15 +153,9 @@
                     <x-responsive-nav-link :href="route('admin.monitoring')" :active="request()->routeIs('admin.monitoring')">
                         {{ __('Monitoring & Laporan') }}
                     </x-responsive-nav-link>
-                @elseif(auth()->user()->hasRole('dosen-pembimbing'))
-                    <x-responsive-nav-link :href="route('dosen-pembimbing.dashboard')" :active="request()->routeIs('dosen-pembimbing.*')">
+                @elseif(auth()->user()->hasRole('dosen-biasa'))
+                    <x-responsive-nav-link :href="route('dosen.dashboard')" :active="request()->routeIs('dosen.*')">
                         {{ __('Dashboard Dosen') }}
-                    </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('dosen-pembimbing.jadwal')" :active="request()->routeIs('dosen-pembimbing.jadwal')">
-                        {{ __('Jadwal Mengajar') }}
-                    </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('dosen-pembimbing.materi')" :active="request()->routeIs('dosen-pembimbing.materi')">
-                        {{ __('Materi Kuliah') }}
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('kerja-praktek.index')" :active="request()->routeIs('kerja-praktek.*')">
                         {{ __('Daftar KP') }}

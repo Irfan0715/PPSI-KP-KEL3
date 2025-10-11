@@ -32,9 +32,9 @@ class RoleRedirectMiddleware
             // Biarkan user tetap di dashboard role masing-masing
             $allowedDashboards = [
                 'admin.dashboard',
-                'dosen-pembimbing.dashboard',
+                'dosen.dashboard',
                 'mahasiswa.dashboard',
-                'pembimbing-lapangan.dashboard',
+                'lapangan.dashboard',
             ];
 
             if ($currentRoute && in_array($currentRoute->getName(), $allowedDashboards)) {
@@ -52,9 +52,9 @@ class RoleRedirectMiddleware
     {
         $redirectRoutes = [
             'admin' => 'admin.dashboard',
-            'dosen-pembimbing' => 'dosen-pembimbing.dashboard',
+            'dosen-biasa' => 'dosen.dashboard',
             'mahasiswa' => 'mahasiswa.dashboard',
-            'pembimbing-lapangan' => 'pembimbing-lapangan.dashboard',
+            'pembimbing-lapangan' => 'lapangan.dashboard',
         ];
 
         foreach ($redirectRoutes as $role => $route) {

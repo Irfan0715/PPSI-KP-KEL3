@@ -112,7 +112,7 @@ class AdminController extends Controller
             ->distinct('mahasiswa_id')->count('mahasiswa_id');
         $instansiTerdaftar = $totalInstansi;
         $dosenPembimbingCount = User::whereHas('roles', function($q){
-            $q->whereIn('slug', ['dosen','dosen-biasa','dosen-pembimbing']);
+            $q->whereIn('slug', ['dosen-biasa']);
         })->count();
         $laporanMasuk = DB::table('kerja_prakteks')->whereNotNull('laporan_akhir_file')->count();
 
@@ -173,7 +173,7 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:admin,mahasiswa,dosen,pembimbing_lapangan',
+            'role' => 'required|in:admin,mahasiswa,dosen-biasa,pembimbing_lapangan',
         ]);
 
         $user = User::create([
@@ -196,7 +196,7 @@ class AdminController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,'.$user->id,
-            'role' => 'required|in:admin,mahasiswa,dosen,pembimbing_lapangan',
+            'role' => 'required|in:admin,mahasiswa,dosen-biasa,pembimbing_lapangan',
         ]);
 
         $user->update([
@@ -410,7 +410,7 @@ class AdminController extends Controller
             ->paginate(15);
         $dosens = User::where('status_aktif', true)
             ->whereHas('roles', function ($q) {
-                $q->whereIn('slug', ['dosen-biasa', 'dosen', 'dosen-pembimbing', 'admin']);
+                $q->whereIn('slug', ['dosen-biasa']);
             })
             ->orderBy('name')
             ->get();
@@ -437,7 +437,7 @@ class AdminController extends Controller
             ->paginate(15);
         $dosens = User::where('status_aktif', true)
             ->whereHas('roles', function ($q) {
-                $q->whereIn('slug', ['dosen-biasa', 'dosen', 'dosen-pembimbing', 'admin']);
+                $q->whereIn('slug', ['dosen-biasa']);
             })
             ->orderBy('name')
             ->get();
@@ -463,7 +463,7 @@ class AdminController extends Controller
     public function monitoring()
     {
         $totalMahasiswa = User::whereHas('roles', fn($q) => $q->where('slug', 'mahasiswa'))->count();
-        $totalDosen = User::whereHas('roles', fn($q) => $q->whereIn('slug', ['dosen-biasa','dosen','dosen-pembimbing']))->count();
+        $totalDosen = User::whereHas('roles', fn($q) => $q->whereIn('slug', ['dosen-biasa']))->count();
         $kpByStatus = KerjaPraktek::select('status', DB::raw('count(*) as total'))
             ->groupBy('status')->pluck('total','status');
         $totalKP = KerjaPraktek::count();

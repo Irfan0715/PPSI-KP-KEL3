@@ -11,11 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('nilai', function (Blueprint $table) {
-            $table->foreignId('mahasiswa_id')->constrained('mahasiswa')->onDelete('cascade');
-            $table->foreignId('dosen_id')->nullable()->constrained('dosen')->onDelete('set null');
-            $table->foreignId('pembimbing_lapangan_id')->nullable()->constrained('pembimbing_lapangan')->onDelete('set null');
-        });
+        // Skipped untuk skema baru (tabel plural sudah memiliki FK)
     }
 
     /**
@@ -23,10 +19,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('nilai', function (Blueprint $table) {
-            $table->dropForeign(['mahasiswa_id']);
-            $table->dropForeign(['dosen_id']);
-            $table->dropForeign(['pembimbing_lapangan_id']);
-        });
+        // No-op
     }
 };

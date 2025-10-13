@@ -8,6 +8,7 @@ use App\Models\Lowongan;
 use App\Models\Kuota;
 use App\Models\KerjaPraktek;
 use App\Models\Seminar;
+use App\Models\Proposal;
 use App\Models\Role;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -450,6 +451,28 @@ class AdminController extends Controller
         ]);
 
         $kerjaPraktek->update(['dosen_pembimbing_id' => $validated['dosen_pembimbing_id']]);
+
+        // Sinkronkan juga proposal mahasiswa tersebut agar terindeks di dashboard dosen
+        $mahasiswaUserId = $kerjaPraktek->mahasiswa_id; // user.id milik mahasiswa
+        $mhs = \App\Models\Mahasiswa::where('user_id', $mahasiswaUserId)->first();
+        if ($mhs) {
+            // Set dosen_id untuk semua proposal mahasiswa tsb
+            Proposal::where('mahasiswa_id', $mhs->id)
+                ->update(['dosen_id' => (int) $validated['dosen_pembimbing_id']]);
+
+            // Jika mahasiswa belum punya proposal sama sekali, buat draft dari data KP
+            if (!Proposal::where('mahasiswa_id', $mhs->id)->exists()) {
+                Proposal::create([
+                    'mahasiswa_id' => $mhs->id,
+                    'dosen_id' => (int) $validated['dosen_pembimbing_id'],
+                    'judul' => $kerjaPraktek->judul_kp ?? 'Judul KP',
+                    'file_proposal' => '',
+                    'status' => 'pending',
+                    'status_validasi' => 'pending',
+                    'tanggal_upload' => now(),
+                ]);
+            }
+        }
 
         return back()->with('success', 'Dosen pembimbing berhasil dialokasikan.');
     }

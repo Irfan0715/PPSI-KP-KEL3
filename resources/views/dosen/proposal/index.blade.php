@@ -15,7 +15,7 @@
                             <tbody class="divide-y divide-gray-100">
                                 @forelse($proposals as $p)
                                 <tr>
-                                    <td class="px-4 py-2">{{ $p->mahasiswa->name ?? '-' }}</td>
+                                    <td class="px-4 py-2">{{ $p->mahasiswa->user->name ?? '-' }}</td>
                                     <td class="px-4 py-2">{{ $p->judul }}</td>
                                     <td class="px-4 py-2 capitalize">{{ $p->status }}</td>
                                     <td class="px-4 py-2">
@@ -38,4 +38,3 @@
         </div>
     </div>
 </x-app-layout>
-

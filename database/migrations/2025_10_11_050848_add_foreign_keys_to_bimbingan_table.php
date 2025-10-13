@@ -11,10 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('bimbingan', function (Blueprint $table) {
-            $table->foreignId('mahasiswa_id')->constrained('mahasiswa')->onDelete('cascade');
-            $table->foreignId('dosen_id')->constrained('dosen')->onDelete('cascade');
-        });
+        // Skipped untuk skema baru (tabel dan FK sudah ada dengan nama berbeda)
     }
 
     /**
@@ -22,9 +19,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('bimbingan', function (Blueprint $table) {
-            $table->dropForeign(['mahasiswa_id']);
-            $table->dropForeign(['dosen_id']);
-        });
+        // No-op
     }
 };

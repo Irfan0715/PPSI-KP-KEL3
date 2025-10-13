@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('proposal', function (Blueprint $table) {
-            $table->foreignId('mahasiswa_id')->constrained('mahasiswa')->onDelete('cascade');
-            $table->foreignId('dosen_id')->nullable()->constrained('dosen')->onDelete('set null');
-        });
+        // Skipped: skema sudah memakai tabel plural dan kolom FK dibuat di migrasi lain
+        // Dibiarkan kosong agar tidak error saat dijalankan pada skema baru
     }
 
     /**
@@ -22,9 +20,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('proposal', function (Blueprint $table) {
-            $table->dropForeign(['mahasiswa_id']);
-            $table->dropForeign(['dosen_id']);
-        });
+        // No-op
     }
 };

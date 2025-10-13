@@ -11,6 +11,7 @@ class Proposal extends Model
 
     protected $fillable = [
         'mahasiswa_id',
+        'dosen_id',
         'judul',
         'file_proposal',
         // Lama: status
@@ -31,6 +32,6 @@ class Proposal extends Model
 
     public function dosen()
     {
-        return $this->belongsTo(Dosen::class);
+        return $this->belongsTo(User::class, 'dosen_id');
     }
 }

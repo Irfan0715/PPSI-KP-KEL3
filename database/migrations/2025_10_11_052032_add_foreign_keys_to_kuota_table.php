@@ -11,9 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('kuota', function (Blueprint $table) {
-            $table->foreignId('instansi_id')->constrained('instansi')->onDelete('cascade');
-        });
+        // Skipped untuk skema baru (tabel plural sudah memiliki FK)
     }
 
     /**
@@ -21,8 +19,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('kuota', function (Blueprint $table) {
-            $table->dropForeign(['instansi_id']);
-        });
+        // No-op
     }
 };

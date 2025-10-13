@@ -54,7 +54,8 @@ return new class extends Migration
         if (Schema::hasTable('instansis')) {
             Schema::table('instansis', function (Blueprint $table) {
                 if (!Schema::hasColumn('instansis', 'status_verifikasi')) {
-                    $table->string('status_verifikasi')->nullable()->after('status_aktif');
+                    // Tambahkan tanpa asumsi posisi kolom sebelumnya
+                    $table->string('status_verifikasi')->nullable();
                 }
             });
         }
@@ -128,4 +129,3 @@ return new class extends Migration
         }
     }
 };
-

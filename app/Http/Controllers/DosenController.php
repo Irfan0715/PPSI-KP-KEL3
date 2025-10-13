@@ -25,19 +25,20 @@ class DosenController extends Controller
     public function indexProposal()
     {
         $uid = auth()->id();
-        // Ambil proposal milik mahasiswa yang dibimbing dosen ini.
-        // Mapping: proposals.mahasiswa_id -> mahasiswas.id -> mahasiswas.user_id == kerja_prakteks.mahasiswa_id
-        $proposals = Proposal::query()
-            ->leftJoin('mahasiswas', 'mahasiswas.id', '=', 'proposals.mahasiswa_id')
-            ->leftJoin('kerja_prakteks', 'kerja_prakteks.mahasiswa_id', '=', 'mahasiswas.user_id')
-            ->where('kerja_prakteks.dosen_pembimbing_id', $uid)
-            ->select('proposals.*')
-            ->orderByDesc('proposals.created_at')
+        // 1) Prioritas utama: gunakan kolom proposals.dosen_id bila tersedia
+        $proposals = Proposal::where('dosen_id', $uid)
+            ->orderByDesc('created_at')
             ->get();
 
-        // Jika belum ada relasi KP, fallback tampilkan semua untuk validasi manual
+        // 2) Fallback: join melalui relasi KP jika data lama belum tersinkron
         if ($proposals->isEmpty()) {
-            $proposals = Proposal::latest()->get();
+            $proposals = Proposal::query()
+                ->leftJoin('mahasiswas', 'mahasiswas.id', '=', 'proposals.mahasiswa_id')
+                ->leftJoin('kerja_prakteks', 'kerja_prakteks.mahasiswa_id', '=', 'mahasiswas.user_id')
+                ->where('kerja_prakteks.dosen_pembimbing_id', $uid)
+                ->select('proposals.*')
+                ->orderByDesc('proposals.created_at')
+                ->get();
         }
 
         return view('dosen.proposal.index', compact('proposals'));

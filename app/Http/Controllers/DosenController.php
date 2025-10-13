@@ -24,7 +24,22 @@ class DosenController extends Controller
     // CRUD Proposal (review dan approval)
     public function indexProposal()
     {
-        $proposals = Proposal::where('dosen_id', auth()->id())->get();
+        $uid = auth()->id();
+        // Ambil proposal milik mahasiswa yang dibimbing dosen ini.
+        // Mapping: proposals.mahasiswa_id -> mahasiswas.id -> mahasiswas.user_id == kerja_prakteks.mahasiswa_id
+        $proposals = Proposal::query()
+            ->leftJoin('mahasiswas', 'mahasiswas.id', '=', 'proposals.mahasiswa_id')
+            ->leftJoin('kerja_prakteks', 'kerja_prakteks.mahasiswa_id', '=', 'mahasiswas.user_id')
+            ->where('kerja_prakteks.dosen_pembimbing_id', $uid)
+            ->select('proposals.*')
+            ->orderByDesc('proposals.created_at')
+            ->get();
+
+        // Jika belum ada relasi KP, fallback tampilkan semua untuk validasi manual
+        if ($proposals->isEmpty()) {
+            $proposals = Proposal::latest()->get();
+        }
+
         return view('dosen.proposal.index', compact('proposals'));
     }
 

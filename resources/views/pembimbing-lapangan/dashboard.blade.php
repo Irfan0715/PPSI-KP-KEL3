@@ -6,10 +6,10 @@
                 <h1 class="text-2xl font-bold text-gray-800">Sistem KP</h1>
             </div>
             <nav class="mt-6">
-                <a href="{{ route('pembimbing-lapangan.dashboard') }}" class="block py-3 px-6 text-gray-700 hover:bg-gray-200 font-semibold">Dashboard</a>
-                <a href="{{ route('pembimbing-lapangan.laporan') }}" class="block py-3 px-6 text-gray-700 hover:bg-gray-200">Laporan KP</a>
-                <a href="{{ route('pembimbing-lapangan.jadwal-pengawasan') }}" class="block py-3 px-6 text-gray-700 hover:bg-gray-200">Jadwal Pengawasan</a>
-                <a href="{{ route('pembimbing-lapangan.evaluasi') }}" class="block py-3 px-6 text-gray-700 hover:bg-gray-200">Evaluasi</a>
+                <a href="{{ route('lapangan.dashboard') }}" class="block py-3 px-6 text-gray-700 hover:bg-gray-200 font-semibold">Dashboard</a>
+                <a href="{{ route('lapangan.kuesioner.index') }}" class="block py-3 px-6 text-gray-700 hover:bg-gray-200">Laporan KP</a>
+                <a href="{{ route('lapangan.kuota.index') }}" class="block py-3 px-6 text-gray-700 hover:bg-gray-200">Jadwal Pengawasan</a>
+                <a href="{{ route('lapangan.nilai.index') }}" class="block py-3 px-6 text-gray-700 hover:bg-gray-200">Evaluasi</a>
             </nav>
         </aside>
 
@@ -54,15 +54,15 @@
 
             <!-- Quick Actions -->
             <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <a href="{{ route('pembimbing-lapangan.laporan') }}" class="block bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
+                <a href="{{ route('lapangan.kuesioner.index') }}" class="block bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
                     <h3 class="text-lg font-semibold mb-2">Laporan KP</h3>
                     <p class="text-gray-600">Review laporan mahasiswa</p>
                 </a>
-                <a href="{{ route('pembimbing-lapangan.jadwal-pengawasan') }}" class="block bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
+                <a href="{{ route('lapangan.kuota.index') }}" class="block bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
                     <h3 class="text-lg font-semibold mb-2">Jadwal Pengawasan</h3>
                     <p class="text-gray-600">Atur jadwal kunjungan</p>
                 </a>
-                <a href="{{ route('pembimbing-lapangan.evaluasi') }}" class="block bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
+                <a href="{{ route('lapangan.nilai.index') }}" class="block bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
                     <h3 class="text-lg font-semibold mb-2">Evaluasi</h3>
                     <p class="text-gray-600">Evaluasi mahasiswa KP</p>
                 </a>

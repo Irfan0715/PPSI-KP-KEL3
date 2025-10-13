@@ -135,6 +135,7 @@ Route::middleware(['auth', 'role:mahasiswa'])->prefix('mahasiswa')->name('mahasi
 // Dosen routes
 Route::middleware(['auth', 'role:dosen'])->prefix('dosen')->name('dosen.')->group(function () {
     Route::get('/dashboard', [DosenController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard', [DosenController::class, 'dashboard'])->name('dashboard');
 
     // Proposal management
     Route::get('/proposal', [DosenController::class, 'indexProposal'])->name('proposal.index');
@@ -154,6 +155,10 @@ Route::middleware(['auth', 'role:dosen'])->prefix('dosen')->name('dosen.')->grou
     Route::get('/nilai/{nilai}/edit', [DosenController::class, 'editNilai'])->name('nilai.edit');
     Route::put('/nilai/{nilai}', [DosenController::class, 'updateNilai'])->name('nilai.update');
     Route::delete('/nilai/{nilai}', [DosenController::class, 'destroyNilai'])->name('nilai.destroy');
+
+    // Penguji Seminar
+    Route::get('/seminar', [DosenController::class, 'indexSeminar'])->name('seminar.index');
+    Route::post('/seminar/{seminar}', [DosenController::class, 'updateSeminar'])->name('seminar.update');
 });
 
 // Pembimbing Lapangan routes

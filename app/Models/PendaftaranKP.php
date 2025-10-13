@@ -5,21 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Kuesioner extends Model
+class PendaftaranKP extends Model
 {
     use HasFactory;
 
+    protected $table = 'pendaftaran_kps';
+
     protected $fillable = [
         'mahasiswa_id',
-        'pembimbing_lapangan_id',
-        // Kolom lama (kompatibilitas)
-        'isi_kuesioner',
-        'tipe',
-        // Kolom baru agar sesuai diagram
+        'kerja_praktek_id',
         'jenis',
-        'pertanyaan',
-        'jawaban',
+        'tanggal_daftar',
         'status',
+    ];
+
+    protected $casts = [
+        'tanggal_daftar' => 'date',
     ];
 
     public function mahasiswa()
@@ -27,8 +28,9 @@ class Kuesioner extends Model
         return $this->belongsTo(Mahasiswa::class);
     }
 
-    public function pembimbingLapangan()
+    public function kerjaPraktek()
     {
-        return $this->belongsTo(User::class, 'pembimbing_lapangan_id');
+        return $this->belongsTo(KerjaPraktek::class);
     }
 }
+

@@ -12,7 +12,15 @@ class Laporan extends Model
     protected $fillable = [
         'mahasiswa_id',
         'file_laporan',
+        // Lama
         'status',
+        // Baru
+        'tanggal_upload',
+        'status_verifikasi',
+    ];
+
+    protected $casts = [
+        'tanggal_upload' => 'date',
     ];
 
     public function mahasiswa()

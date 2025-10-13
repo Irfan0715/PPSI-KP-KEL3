@@ -45,4 +45,9 @@ class Mahasiswa extends Model
     {
         return $this->hasMany(Kuesioner::class);
     }
+
+    public function pendaftaranKps()
+    {
+        return $this->hasMany(PendaftaranKP::class);
+    }
 }

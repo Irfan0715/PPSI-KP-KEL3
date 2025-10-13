@@ -13,7 +13,15 @@ class Proposal extends Model
         'mahasiswa_id',
         'judul',
         'file_proposal',
+        // Lama: status
         'status',
+        // Baru sesuai diagram
+        'status_validasi',
+        'tanggal_upload',
+    ];
+
+    protected $casts = [
+        'tanggal_upload' => 'date',
     ];
 
     public function mahasiswa()

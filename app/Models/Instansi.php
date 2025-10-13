@@ -24,6 +24,7 @@ class Instansi extends Model
         'website',
         'status',
         'status_aktif',
+        'status_verifikasi',
     ];
 
     protected $casts = [

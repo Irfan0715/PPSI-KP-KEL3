@@ -89,6 +89,8 @@ class MahasiswaController extends Controller
             'judul' => $validated['judul'],
             'file_proposal' => $filePath,
             'status' => $validated['status'],
+            'status_validasi' => $validated['status'],
+            'tanggal_upload' => now(),
         ]);
 
         return redirect()->route('mahasiswa.proposal.index')->with('success', 'Proposal berhasil dibuat.');
@@ -115,6 +117,7 @@ class MahasiswaController extends Controller
         $proposal->update([
             'judul' => $validated['judul'],
             'status' => $validated['status'],
+            'status_validasi' => $validated['status'],
         ]);
 
         return redirect()->route('mahasiswa.proposal.index')->with('success', 'Proposal berhasil diperbarui.');
@@ -214,6 +217,8 @@ class MahasiswaController extends Controller
             'mahasiswa_id' => $mahasiswa->id,
             'file_laporan' => $filePath,
             'status' => $validated['status'],
+            'tanggal_upload' => now(),
+            'status_verifikasi' => $validated['status'],
         ]);
 
         return redirect()->route('mahasiswa.laporan.index')->with('success', 'Laporan berhasil dibuat.');

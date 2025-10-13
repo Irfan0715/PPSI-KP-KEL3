@@ -13,8 +13,32 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Http\Request;
 
-class AdminController extends Controller
-{
+class AdminController extends Controller
+{
+    private function ensureBaseRoles(): void
+    {
+        // Sinkronisasi slug lama ke baru agar konsisten
+        if ($old = Role::where('slug', 'dosen-biasa')->first()) {
+            $new = Role::firstOrCreate(['slug' => 'dosen'], ['name' => 'Dosen']);
+            if ($old->id !== $new->id) {
+                DB::table('user_roles')->where('role_id', $old->id)->update(['role_id' => $new->id]);
+                $old->delete();
+            }
+        }
+        if ($old = Role::where('slug', 'pembimbing-lapangan')->first()) {
+            $new = Role::firstOrCreate(['slug' => 'pembimbing_lapangan'], ['name' => 'Pembimbing Lapangan']);
+            if ($old->id !== $new->id) {
+                DB::table('user_roles')->where('role_id', $old->id)->update(['role_id' => $new->id]);
+                $old->delete();
+            }
+        }
+
+        // Gunakan slug yang konsisten dengan middleware/routes
+        Role::firstOrCreate(['slug' => 'admin'], ['name' => 'Admin']);
+        Role::firstOrCreate(['slug' => 'mahasiswa'], ['name' => 'Mahasiswa']);
+        Role::firstOrCreate(['slug' => 'dosen'], ['name' => 'Dosen']);
+        Role::firstOrCreate(['slug' => 'pembimbing_lapangan'], ['name' => 'Pembimbing Lapangan']);
+    }
     private function instansiStatusColumn(): string
     {
         if (Schema::hasColumn('instansis', 'status')) return 'status';
@@ -73,6 +97,7 @@ class AdminController extends Controller
     }
     public function dashboard()
     {
+        $this->ensureBaseRoles();
         $totalUsers = User::count();
         $totalRoles = Role::count();
         $roleStats = Role::withCount('users')->get();
@@ -111,8 +136,8 @@ class AdminController extends Controller
         $mhsAktifKP = KerjaPraktek::whereIn('status', ['disetujui','berlangsung'])
             ->distinct('mahasiswa_id')->count('mahasiswa_id');
         $instansiTerdaftar = $totalInstansi;
-        $dosenPembimbingCount = User::whereHas('roles', function($q){
-            $q->whereIn('slug', ['dosen-biasa']);
+        $dosenPembimbingCount = User::whereHas('roles', function ($q) {
+            $q->whereIn('slug', ['dosen']);
         })->count();
         $laporanMasuk = DB::table('kerja_prakteks')->whereNotNull('laporan_akhir_file')->count();
 
@@ -157,6 +182,7 @@ class AdminController extends Controller
     // CRUD User
     public function indexUsers()
     {
+        $this->ensureBaseRoles();
         $users = User::with('roles')->paginate(15);
         $roles = Role::all();
         return view('admin.users', compact('users', 'roles'));
@@ -173,7 +199,7 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:admin,mahasiswa,dosen-biasa,pembimbing_lapangan',
+            'role' => 'required|in:admin,mahasiswa,dosen,pembimbing_lapangan',
         ]);
 
         $user = User::create([
@@ -195,8 +221,8 @@ class AdminController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,'.$user->id,
-            'role' => 'required|in:admin,mahasiswa,dosen-biasa,pembimbing_lapangan',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'role' => 'required|in:admin,mahasiswa,dosen,pembimbing_lapangan',
         ]);
 
         $user->update([
@@ -204,7 +230,6 @@ class AdminController extends Controller
             'email' => $validated['email'],
         ]);
         // Update roles
-        $user->roles()->sync([]);
         $user->assignRole($validated['role']);
 
         return redirect()->route('admin.users')->with('success', 'User berhasil diperbarui.');
@@ -216,7 +241,7 @@ class AdminController extends Controller
             'role_id' => 'required|exists:roles,id',
         ]);
 
-        $user->roles()->sync([$validated['role_id']]);
+        $user->assignRoleById((int) $validated['role_id']);
 
         return redirect()->route('admin.users')->with('success', 'Role pengguna berhasil diperbarui.');
     }
@@ -410,7 +435,7 @@ class AdminController extends Controller
             ->paginate(15);
         $dosens = User::where('status_aktif', true)
             ->whereHas('roles', function ($q) {
-                $q->whereIn('slug', ['dosen-biasa']);
+                $q->whereIn('slug', ['dosen']);
             })
             ->orderBy('name')
             ->get();
@@ -437,7 +462,7 @@ class AdminController extends Controller
             ->paginate(15);
         $dosens = User::where('status_aktif', true)
             ->whereHas('roles', function ($q) {
-                $q->whereIn('slug', ['dosen-biasa']);
+                $q->whereIn('slug', ['dosen']);
             })
             ->orderBy('name')
             ->get();
@@ -463,7 +488,7 @@ class AdminController extends Controller
     public function monitoring()
     {
         $totalMahasiswa = User::whereHas('roles', fn($q) => $q->where('slug', 'mahasiswa'))->count();
-        $totalDosen = User::whereHas('roles', fn($q) => $q->whereIn('slug', ['dosen-biasa']))->count();
+        $totalDosen = User::whereHas('roles', fn($q) => $q->whereIn('slug', ['dosen']))->count();
         $kpByStatus = KerjaPraktek::select('status', DB::raw('count(*) as total'))
             ->groupBy('status')->pluck('total','status');
         $totalKP = KerjaPraktek::count();
@@ -483,3 +508,4 @@ class AdminController extends Controller
         ));
     }
 }
+

@@ -21,7 +21,10 @@ class RoleMiddleware
 
         $user = auth()->user();
 
-        if (!$user->hasRole($role)) {
+        // Handle multiple roles separated by comma
+        $roles = array_map('trim', explode(',', $role));
+
+        if (!$user->hasAnyRole($roles)) {
             abort(403, 'Akses ditolak. Anda tidak memiliki izin untuk mengakses halaman ini.');
         }
 

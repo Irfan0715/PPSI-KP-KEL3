@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace Database\Seeders;
 
@@ -20,13 +20,8 @@ class RoleSeeder extends Seeder
                 'description' => 'Administrator sistem dengan akses penuh'
             ],
             [
-                'name' => 'Dosen Supervisor',
-                'slug' => 'dosen-supervisor',
-                'description' => 'Dosen yang bertugas sebagai supervisor KP'
-            ],
-            [
-                'name' => 'Dosen Biasa',
-                'slug' => 'dosen-biasa',
+                'name' => 'Dosen',
+                'slug' => 'dosen',
                 'description' => 'Dosen yang bertugas sebagai pembimbing KP'
             ],
             [
@@ -35,9 +30,9 @@ class RoleSeeder extends Seeder
                 'description' => 'Mahasiswa yang mengikuti program kerja praktek'
             ],
             [
-                'name' => 'Pengawas Lapangan',
-                'slug' => 'pengawas-lapangan',
-                'description' => 'Pengawas lapangan yang mengawasi mahasiswa KP di instansi'
+                'name' => 'Pembimbing Lapangan',
+                'slug' => 'pembimbing_lapangan',
+                'description' => 'Pembimbing lapangan yang mengawasi mahasiswa KP di instansi'
             ]
         ];
 
@@ -49,3 +44,4 @@ class RoleSeeder extends Seeder
         }
     }
 }
+

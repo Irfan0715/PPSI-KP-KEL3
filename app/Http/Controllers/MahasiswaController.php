@@ -252,16 +252,23 @@ class MahasiswaController extends Controller
     // Melihat hasil nilai
     public function nilai()
     {
-        $mahasiswa = auth()->user()->mahasiswa;
-        $nilais = $mahasiswa->nilais;
+        $user = auth()->user();
+        $mahasiswa = $user->mahasiswa;
+        if (!$mahasiswa) {
+            // Jika profil mahasiswa belum ada, tampilkan kosong agar tidak error
+            $nilais = collect();
+        } else {
+            $nilais = $mahasiswa->nilais()->latest()->get();
+        }
         return view('mahasiswa.nilai', compact('nilais'));
     }
 
     // CRUD Kuesioner mahasiswa
     public function indexKuesioner()
     {
-        $mahasiswa = auth()->user()->mahasiswa;
-        $kuesioners = $mahasiswa->kuesioners;
+        $user = auth()->user();
+        $mahasiswa = $user->mahasiswa;
+        $kuesioners = $mahasiswa ? $mahasiswa->kuesioners : collect();
         return view('mahasiswa.kuesioner.index', compact('kuesioners'));
     }
 
@@ -279,6 +286,10 @@ class MahasiswaController extends Controller
         ]);
 
         $mahasiswa = auth()->user()->mahasiswa;
+        if (!$mahasiswa) {
+            return redirect()->route('mahasiswa.kuesioner.index')
+                ->with('error', 'Profil mahasiswa belum dibuat. Hubungi admin.');
+        }
 
         Kuesioner::create([
             'mahasiswa_id' => $mahasiswa->id,

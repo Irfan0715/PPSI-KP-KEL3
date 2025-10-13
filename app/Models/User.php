@@ -76,11 +76,52 @@ class User extends Authenticatable
      */
     public function assignRole(string $roleSlug): void
     {
-        $role = Role::where('slug', $roleSlug)->first();
+        $normalized = $this->normalizeRoleSlug($roleSlug);
+        $role = Role::where('slug', $normalized)->first();
 
-        if ($role && !$this->hasRole($roleSlug)) {
-            $this->roles()->attach($role->id);
+        if ($role) {
+            // Pastikan hanya satu role yang aktif
+            $this->roles()->sync([$role->id]);
+
+            // Sinkronkan juga kolom enum users.role agar konsisten dengan middleware/routing lama
+            $this->role = $this->toUserRoleEnum($normalized);
+            $this->save();
         }
+    }
+
+    /**
+     * Assign role berdasarkan ID role
+     */
+    public function assignRoleById(int $roleId): void
+    {
+        $role = Role::find($roleId);
+        if ($role) {
+            $this->roles()->sync([$role->id]);
+            $this->role = $this->toUserRoleEnum($this->normalizeRoleSlug($role->slug));
+            $this->save();
+        }
+    }
+
+    private function normalizeRoleSlug(string $slug): string
+    {
+        // Konsolidasikan penamaan agar seragam di seluruh aplikasi
+        return match ($slug) {
+            'dosen-biasa', 'dosen' => 'dosen',
+            'pembimbing-lapangan', 'pembimbing_lapangan' => 'pembimbing_lapangan',
+            default => $slug,
+        };
+    }
+
+    private function toUserRoleEnum(string $normalizedSlug): string
+    {
+        // Nilai yang valid di kolom users.role (enum)
+        return match ($normalizedSlug) {
+            'admin' => 'admin',
+            'mahasiswa' => 'mahasiswa',
+            'dosen' => 'dosen',
+            'pembimbing_lapangan' => 'pembimbing_lapangan',
+            default => 'mahasiswa',
+        };
     }
 
     /**
@@ -114,6 +155,14 @@ class User extends Authenticatable
     {
         $primaryRole = $this->getPrimaryRole();
         return $primaryRole ? $primaryRole->name : 'Tidak ada role';
+    }
+
+    /**
+     * Profil Mahasiswa terkait user (jika ada)
+     */
+    public function mahasiswa()
+    {
+        return $this->hasOne(Mahasiswa::class);
     }
 
     /**
@@ -202,8 +251,8 @@ class User extends Authenticatable
     public function scopeDosenAktif($query)
     {
         return $query->where('status_aktif', true)
-                    ->whereHas('roles', function($q) {
-                        $q->whereIn('slug', ['dosen-biasa', 'admin']);
-                    });
+            ->whereHas('roles', function ($q) {
+                $q->whereIn('slug', ['dosen', 'admin']);
+            });
     }
 }

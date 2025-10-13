@@ -32,13 +32,13 @@ class AuthenticatedSessionController extends Controller
         $user = auth()->user();
         $redirectRoutes = [
             'admin' => 'admin.dashboard',
-            'dosen-biasa' => 'dosen.dashboard',
+            'dosen' => 'dosen.dashboard',
             'mahasiswa' => 'mahasiswa.dashboard',
-            'pembimbing-lapangan' => 'lapangan.dashboard',
+            'pembimbing_lapangan' => 'lapangan.dashboard',
         ];
 
         foreach ($redirectRoutes as $role => $route) {
-            if ($user->hasRole($role)) {
+            if ($user->role === $role) {
                 return redirect()->route($route);
             }
         }

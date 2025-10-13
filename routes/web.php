@@ -14,13 +14,12 @@ Route::get('/', function () {
         $redirectRoutes = [
             'admin' => 'admin.dashboard',
             'mahasiswa' => 'mahasiswa.dashboard',
-            'dosen-biasa' => 'dosen.dashboard',
+            'dosen' => 'dosen.dashboard',
             'pembimbing_lapangan' => 'lapangan.dashboard',
-            'pembimbing-lapangan' => 'lapangan.dashboard',
         ];
 
         foreach ($redirectRoutes as $role => $route) {
-            if ($user->hasRole($role)) {
+            if ($user->role === $role) {
                 return redirect()->route($route);
             }
         }
@@ -134,7 +133,7 @@ Route::middleware(['auth', 'role:mahasiswa'])->prefix('mahasiswa')->name('mahasi
 });
 
 // Dosen routes
-Route::middleware(['auth', 'role:dosen-biasa'])->prefix('dosen')->name('dosen.')->group(function () {
+Route::middleware(['auth', 'role:dosen'])->prefix('dosen')->name('dosen.')->group(function () {
     Route::get('/dashboard', [DosenController::class, 'dashboard'])->name('dashboard');
 
     // Proposal management
@@ -158,10 +157,9 @@ Route::middleware(['auth', 'role:dosen-biasa'])->prefix('dosen')->name('dosen.')
 });
 
 // Pembimbing Lapangan routes
-Route::middleware(['auth', 'role:pembimbing_lapangan,pembimbing-lapangan'])->prefix('lapangan')->name('lapangan.')->group(function () {
+Route::middleware(['auth', 'role:pembimbing_lapangan'])->prefix('lapangan')->name('lapangan.')->group(function () {
     Route::get('/dashboard', [PembimbingLapanganController::class, 'dashboard'])->name('dashboard');
 
-    // Nilai management
     // Nilai management
     Route::get('/nilai', [PembimbingLapanganController::class, 'indexNilai'])->name('nilai.index');
     Route::get('/nilai/create', [PembimbingLapanganController::class, 'createNilai'])->name('nilai.create');
@@ -203,3 +201,31 @@ Route::middleware(['auth'])->prefix('kerja-praktek')->name('kerja-praktek.')->gr
     Route::post('/{kerjaPraktek}/upload-laporan', [KerjaPraktekController::class, 'uploadLaporan'])->name('upload-laporan');
     Route::get('/{kerjaPraktek}/download/{type}', [KerjaPraktekController::class, 'downloadFile'])->name('download');
 });
+
+// Dev helper: create admin quickly in local env
+if (app()->environment(['local', 'development'])) {
+    Route::get('/__dev/create-admin', function () {
+        $email = 'admin@univ.ac.id';
+        $user = \App\Models\User::firstOrCreate(
+            ['email' => $email],
+            ['name' => 'Administrator']
+        );
+
+        // Set password plain; User model will hash automatically via casts
+        $user->password = 'password123';
+        $user->email_verified_at = now();
+        $user->save();
+
+        // Ensure admin role exists and assign
+        \App\Models\Role::firstOrCreate(['slug' => 'admin'], ['name' => 'Admin']);
+        if (!$user->roles()->where('slug', 'admin')->exists()) {
+            $user->assignRole('admin');
+        }
+
+        return response()->json([
+            'status' => 'ok',
+            'message' => 'Admin created/updated',
+            'login' => ['email' => $email, 'password' => 'password123']
+        ]);
+    })->name('dev.create-admin');
+}

@@ -32,9 +32,21 @@
                             <x-nav-link :href="route('admin.monitoring')" :active="request()->routeIs('admin.monitoring')">
                                 {{ __('Monitoring & Laporan') }}
                             </x-nav-link>
-                        @elseif(auth()->user()->hasRole('dosen-biasa'))
-                            <x-nav-link :href="route('dosen.dashboard')" :active="request()->routeIs('dosen.*')">
+                        @elseif(auth()->user()->hasRole('dosen') || auth()->user()->hasRole('dosen-biasa'))
+                            <x-nav-link :href="route('dosen.dashboard')" :active="request()->routeIs('dosen.dashboard')">
                                 {{ __('Dashboard Dosen') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('dosen.proposal.index')" :active="request()->routeIs('dosen.proposal.*')">
+                                {{ __('Validasi Proposal') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('dosen.bimbingan.index')" :active="request()->routeIs('dosen.bimbingan.*')">
+                                {{ __('Riwayat Bimbingan') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('dosen.nilai.index')" :active="request()->routeIs('dosen.nilai.*')">
+                                {{ __('Nilai Pembimbing') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('dosen.seminar.index')" :active="request()->routeIs('dosen.seminar.*')">
+                                {{ __('Penguji Seminar') }}
                             </x-nav-link>
                             <x-nav-link :href="route('kerja-praktek.index')" :active="request()->routeIs('kerja-praktek.*')">
                                 {{ __('Daftar KP') }}
@@ -58,21 +70,18 @@
                             <x-nav-link :href="route('profile.edit')" :active="request()->routeIs('profile.edit')">
                                 {{ __('Profil') }}
                             </x-nav-link>
-                        @elseif(auth()->user()->hasRole('pembimbing-lapangan'))
-                            <x-nav-link :href="route('pembimbing-lapangan.dashboard')" :active="request()->routeIs('pembimbing-lapangan.*')">
+                        @elseif(auth()->user()->hasRole('pembimbing_lapangan') || auth()->user()->hasRole('pembimbing-lapangan'))
+                            <x-nav-link :href="route('lapangan.dashboard')" :active="request()->routeIs('lapangan.dashboard')">
                                 {{ __('Dashboard Pengawas') }}
                             </x-nav-link>
-                            <x-nav-link :href="route('pembimbing-lapangan.laporan')" :active="request()->routeIs('pembimbing-lapangan.laporan')">
-                                {{ __('Laporan KP') }}
+                            <x-nav-link :href="route('lapangan.nilai.index')" :active="request()->routeIs('lapangan.nilai.*')">
+                                {{ __('Nilai Lapangan') }}
                             </x-nav-link>
-                            <x-nav-link :href="route('pembimbing-lapangan.jadwal-pengawasan')" :active="request()->routeIs('pembimbing-lapangan.jadwal-pengawasan')">
-                                {{ __('Jadwal Pengawasan') }}
+                            <x-nav-link :href="route('lapangan.kuesioner.index')" :active="request()->routeIs('lapangan.kuesioner.*')">
+                                {{ __('Kuesioner') }}
                             </x-nav-link>
-                            <x-nav-link :href="route('pembimbing-lapangan.evaluasi')" :active="request()->routeIs('pembimbing-lapangan.evaluasi')">
-                                {{ __('Evaluasi') }}
-                            </x-nav-link>
-                            <x-nav-link :href="route('kerja-praktek.index')" :active="request()->routeIs('kerja-praktek.*')">
-                                {{ __('Daftar KP') }}
+                            <x-nav-link :href="route('lapangan.kuota.index')" :active="request()->routeIs('lapangan.kuota.*')">
+                                {{ __('Usulan Kuota') }}
                             </x-nav-link>
                         @endif
                     @endauth
@@ -153,9 +162,21 @@
                     <x-responsive-nav-link :href="route('admin.monitoring')" :active="request()->routeIs('admin.monitoring')">
                         {{ __('Monitoring & Laporan') }}
                     </x-responsive-nav-link>
-                @elseif(auth()->user()->hasRole('dosen-biasa'))
-                    <x-responsive-nav-link :href="route('dosen.dashboard')" :active="request()->routeIs('dosen.*')">
+                @elseif(auth()->user()->hasRole('dosen') || auth()->user()->hasRole('dosen-biasa'))
+                    <x-responsive-nav-link :href="route('dosen.dashboard')" :active="request()->routeIs('dosen.dashboard')">
                         {{ __('Dashboard Dosen') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('dosen.proposal.index')" :active="request()->routeIs('dosen.proposal.*')">
+                        {{ __('Validasi Proposal') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('dosen.bimbingan.index')" :active="request()->routeIs('dosen.bimbingan.*')">
+                        {{ __('Riwayat Bimbingan') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('dosen.nilai.index')" :active="request()->routeIs('dosen.nilai.*')">
+                        {{ __('Nilai Pembimbing') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('dosen.seminar.index')" :active="request()->routeIs('dosen.seminar.*')">
+                        {{ __('Penguji Seminar') }}
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('kerja-praktek.index')" :active="request()->routeIs('kerja-praktek.*')">
                         {{ __('Daftar KP') }}
@@ -179,21 +200,18 @@
                     <x-responsive-nav-link :href="route('profile.edit')" :active="request()->routeIs('profile.edit')">
                         {{ __('Profil') }}
                     </x-responsive-nav-link>
-                @elseif(auth()->user()->hasRole('pembimbing-lapangan'))
-                    <x-responsive-nav-link :href="route('pembimbing-lapangan.dashboard')" :active="request()->routeIs('pembimbing-lapangan.*')">
+                @elseif(auth()->user()->hasRole('pembimbing_lapangan') || auth()->user()->hasRole('pembimbing-lapangan'))
+                    <x-responsive-nav-link :href="route('lapangan.dashboard')" :active="request()->routeIs('lapangan.*')">
                         {{ __('Dashboard Pengawas') }}
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('pembimbing-lapangan.laporan')" :active="request()->routeIs('pembimbing-lapangan.laporan')">
-                        {{ __('Laporan KP') }}
+                    <x-responsive-nav-link :href="route('lapangan.nilai.index')" :active="request()->routeIs('lapangan.nilai.*')">
+                        {{ __('Nilai Lapangan') }}
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('pembimbing-lapangan.jadwal-pengawasan')" :active="request()->routeIs('pembimbing-lapangan.jadwal-pengawasan')">
-                        {{ __('Jadwal Pengawasan') }}
+                    <x-responsive-nav-link :href="route('lapangan.kuesioner.index')" :active="request()->routeIs('lapangan.kuesioner.*')">
+                        {{ __('Kuesioner') }}
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('pembimbing-lapangan.evaluasi')" :active="request()->routeIs('pembimbing-lapangan.evaluasi')">
-                        {{ __('Evaluasi') }}
-                    </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('kerja-praktek.index')" :active="request()->routeIs('kerja-praktek.*')">
-                        {{ __('Daftar KP') }}
+                    <x-responsive-nav-link :href="route('lapangan.kuota.index')" :active="request()->routeIs('lapangan.kuota.*')">
+                        {{ __('Usulan Kuota') }}
                     </x-responsive-nav-link>
                 @endif
             @endauth

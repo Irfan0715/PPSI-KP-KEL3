@@ -7,6 +7,7 @@ use App\Models\Proposal;
 use App\Models\Bimbingan;
 use App\Models\Nilai;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class DosenController extends Controller
 {
@@ -67,7 +68,10 @@ class DosenController extends Controller
         $bimbingans = Bimbingan::query()
             ->where(function($q){
                 $uid = auth()->id();
-                $q->where('dosen_pembimbing_id',$uid)->orWhere('dosen_id',$uid);
+                $q->where('dosen_pembimbing_id', $uid);
+                if (Schema::hasColumn('bimbingans', 'dosen_id')) {
+                    $q->orWhere('dosen_id', $uid);
+                }
             })
             ->orderByDesc('created_at')
             ->get();

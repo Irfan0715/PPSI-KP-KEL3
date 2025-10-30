@@ -7,6 +7,8 @@ use App\Models\Proposal;
 use App\Models\Bimbingan;
 use App\Models\Nilai;
 use Illuminate\Http\Request;
+use App\Models\KerjaPraktek;
+use App\Models\Mahasiswa;
 use Illuminate\Support\Facades\Schema;
 
 class DosenController extends Controller
@@ -26,23 +28,56 @@ class DosenController extends Controller
     public function indexProposal()
     {
         $uid = auth()->id();
-        // 1) Prioritas utama: gunakan kolom proposals.dosen_id bila tersedia
+
+        // Sinkronkan proposal untuk semua KP yang masih diajukan di bawah dosen ini
+        $this->syncProposalsForPendingKP($uid);
+
+        // Ambil hanya yang perlu divalidasi (status pending/diajukan)
         $proposals = Proposal::where('dosen_id', $uid)
+            ->whereIn('status', ['pending','diajukan'])
             ->orderByDesc('created_at')
             ->get();
 
-        // 2) Fallback: join melalui relasi KP jika data lama belum tersinkron
-        if ($proposals->isEmpty()) {
-            $proposals = Proposal::query()
-                ->leftJoin('mahasiswas', 'mahasiswas.id', '=', 'proposals.mahasiswa_id')
-                ->leftJoin('kerja_prakteks', 'kerja_prakteks.mahasiswa_id', '=', 'mahasiswas.user_id')
-                ->where('kerja_prakteks.dosen_pembimbing_id', $uid)
-                ->select('proposals.*')
-                ->orderByDesc('proposals.created_at')
-                ->get();
-        }
-
         return view('dosen.proposal.index', compact('proposals'));
+    }
+
+    private function syncProposalsForPendingKP(int $dosenId): void
+    {
+        // Cari semua KP yang belum diproses dan sudah memiliki dosen pembimbing ini
+        $kps = KerjaPraktek::where('dosen_pembimbing_id', $dosenId)
+            ->where('status', 'diajukan')
+            ->get();
+
+        foreach ($kps as $kp) {
+            // Pastikan ada profil mahasiswa (tabel mahasiswas)
+            $mhs = Mahasiswa::where('user_id', $kp->mahasiswa_id)->first();
+            if (!$mhs) {
+                $mhs = Mahasiswa::create([
+                    'user_id' => $kp->mahasiswa_id,
+                    'nim' => '',
+                    'prodi' => '',
+                    'angkatan' => (int) now()->format('Y')
+                ]);
+            }
+
+            // Jika mahasiswa belum punya proposal sama sekali, buatkan pending
+            if (!Proposal::where('mahasiswa_id', $mhs->id)->exists()) {
+                Proposal::create([
+                    'mahasiswa_id' => $mhs->id,
+                    'dosen_id' => $dosenId,
+                    'judul' => $kp->judul_kp ?? 'Judul KP',
+                    'file_proposal' => '',
+                    'status' => 'pending',
+                    'status_validasi' => 'pending',
+                    'tanggal_upload' => now(),
+                ]);
+            } else {
+                // Pastikan semua proposal mahasiswa itu diarahkan ke dosen ini bila kosong
+                Proposal::where('mahasiswa_id', $mhs->id)
+                    ->whereNull('dosen_id')
+                    ->update(['dosen_id' => $dosenId]);
+            }
+        }
     }
 
     public function showProposal(Proposal $proposal)
@@ -50,15 +85,25 @@ class DosenController extends Controller
         return view('dosen.proposal.show', compact('proposal'));
     }
 
-    public function approveProposal(Proposal $proposal)
+    public function approveProposal(Request $request, Proposal $proposal)
     {
-        $proposal->update(['status' => 'disetujui']);
+        $note = $request->input('catatan_validasi');
+        $payload = ['status' => 'disetujui', 'status_validasi' => 'disetujui'];
+        if (\Illuminate\Support\Facades\Schema::hasColumn('proposals','catatan_validasi')) {
+            $payload['catatan_validasi'] = $note;
+        }
+        $proposal->update($payload);
         return redirect()->route('dosen.proposal.index')->with('success', 'Proposal disetujui.');
     }
 
-    public function rejectProposal(Proposal $proposal)
+    public function rejectProposal(Request $request, Proposal $proposal)
     {
-        $proposal->update(['status' => 'ditolak']);
+        $note = $request->input('catatan_validasi');
+        $payload = ['status' => 'ditolak', 'status_validasi' => 'ditolak'];
+        if (\Illuminate\Support\Facades\Schema::hasColumn('proposals','catatan_validasi')) {
+            $payload['catatan_validasi'] = $note;
+        }
+        $proposal->update($payload);
         return redirect()->route('dosen.proposal.index')->with('success', 'Proposal ditolak.');
     }
 
@@ -86,13 +131,25 @@ class DosenController extends Controller
     public function updateBimbingan(Request $request, Bimbingan $bimbingan)
     {
         $validated = $request->validate([
-            'catatan' => 'required|string',
-            'status' => 'required|in:terjadwal,berlangsung,selesai,dibatalkan',
+            'catatan' => 'nullable|string',
+            'status' => 'nullable|in:terjadwal,berlangsung,selesai,dibatalkan',
+            'feedback_dosen' => 'nullable|string',
         ]);
 
-        $bimbingan->update($validated);
+        $payload = [];
+        if (!empty($validated['status'])) $payload['status'] = $validated['status'];
+        if (!empty($validated['catatan'])) $payload['catatan'] = $validated['catatan'];
+        if (\Illuminate\Support\Facades\Schema::hasColumn('bimbingans','feedback_dosen')) {
+            if (!empty($validated['feedback_dosen'])) $payload['feedback_dosen'] = $validated['feedback_dosen'];
+        } else {
+            if (!empty($validated['feedback_dosen'])) {
+                $payload['catatan'] = trim(($payload['catatan'] ?? ($bimbingan->catatan ?? '')) . "\nFeedback dosen: " . $validated['feedback_dosen']);
+            }
+        }
 
-        return redirect()->route('dosen.bimbingan.index')->with('success', 'Bimbingan berhasil diperbarui.');
+        if (!empty($payload)) $bimbingan->update($payload);
+
+        return redirect()->route('dosen.bimbingan.index')->with('success', 'Bimbingan diperbarui.');
     }
 
     // CRUD Nilai (penilaian mahasiswa)
@@ -128,6 +185,23 @@ class DosenController extends Controller
             'total_nilai' => $validated['total_nilai'],
         ]);
 
+        // Sinkronkan komponen nilai ke entitas KP agar nilai akhir terhitung
+        $m = \App\Models\Mahasiswa::find($validated['mahasiswa_id']);
+        if ($m) {
+            $kp = \App\Models\KerjaPraktek::where('mahasiswa_id', $m->user_id)
+                ->orderByDesc('created_at')->first();
+            if ($kp) {
+                if (!is_null($validated['nilai_pembimbing'] ?? null)) {
+                    $kp->nilai_dosen_pembimbing = $validated['nilai_pembimbing'];
+                }
+                if (!is_null($validated['nilai_lapangan'] ?? null)) {
+                    $kp->nilai_pengawas_lapangan = $validated['nilai_lapangan'];
+                }
+                $kp->save();
+                $kp->hitungNilaiAkhir();
+            }
+        }
+
         return redirect()->route('dosen.nilai.index')->with('success', 'Nilai berhasil dibuat.');
     }
 
@@ -146,6 +220,23 @@ class DosenController extends Controller
         ]);
 
         $nilai->update($validated);
+
+        // Sinkronkan ke KP
+        $m = \App\Models\Mahasiswa::find($nilai->mahasiswa_id);
+        if ($m) {
+            $kp = \App\Models\KerjaPraktek::where('mahasiswa_id', $m->user_id)
+                ->orderByDesc('created_at')->first();
+            if ($kp) {
+                if (!is_null($validated['nilai_pembimbing'] ?? null)) {
+                    $kp->nilai_dosen_pembimbing = $validated['nilai_pembimbing'];
+                }
+                if (!is_null($validated['nilai_lapangan'] ?? null)) {
+                    $kp->nilai_pengawas_lapangan = $validated['nilai_lapangan'];
+                }
+                $kp->save();
+                $kp->hitungNilaiAkhir();
+            }
+        }
 
         return redirect()->route('dosen.nilai.index')->with('success', 'Nilai berhasil diperbarui.');
     }

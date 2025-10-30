@@ -48,9 +48,6 @@
                             <x-nav-link :href="route('dosen.seminar.index')" :active="request()->routeIs('dosen.seminar.*')">
                                 {{ __('Penguji Seminar') }}
                             </x-nav-link>
-                            <x-nav-link :href="route('kerja-praktek.index')" :active="request()->routeIs('kerja-praktek.*')">
-                                {{ __('Daftar KP') }}
-                            </x-nav-link>
                         @elseif(auth()->user()->hasRole('mahasiswa'))
                             <x-nav-link :href="route('mahasiswa.dashboard')" :active="request()->routeIs('mahasiswa.dashboard')">
                                 {{ __('Dashboard Mahasiswa') }}
@@ -64,8 +61,14 @@
                             <x-nav-link :href="route('mahasiswa.nilai')" :active="request()->routeIs('mahasiswa.nilai')">
                                 {{ __('Hasil KP') }}
                             </x-nav-link>
+                            <x-nav-link :href="route('mahasiswa.seminar.index')" :active="request()->routeIs('mahasiswa.seminar.*')">
+                                {{ __('Seminar') }}
+                            </x-nav-link>
                             <x-nav-link :href="route('mahasiswa.kuesioner.index')" :active="request()->routeIs('mahasiswa.kuesioner.*')">
                                 {{ __('Kuesioner') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('mahasiswa.instansi.create')" :active="request()->routeIs('mahasiswa.instansi.*')">
+                                {{ __('Ajukan Instansi') }}
                             </x-nav-link>
                             <x-nav-link :href="route('profile.edit')" :active="request()->routeIs('profile.edit')">
                                 {{ __('Profil') }}
@@ -178,9 +181,6 @@
                     <x-responsive-nav-link :href="route('dosen.seminar.index')" :active="request()->routeIs('dosen.seminar.*')">
                         {{ __('Penguji Seminar') }}
                     </x-responsive-nav-link>
-                    <x-responsive-nav-link :href="route('kerja-praktek.index')" :active="request()->routeIs('kerja-praktek.*')">
-                        {{ __('Daftar KP') }}
-                    </x-responsive-nav-link>
                 @elseif(auth()->user()->hasRole('mahasiswa'))
                     <x-responsive-nav-link :href="route('mahasiswa.dashboard')" :active="request()->routeIs('mahasiswa.*')">
                         {{ __('Dashboard Mahasiswa') }}
@@ -194,8 +194,14 @@
                     <x-responsive-nav-link :href="route('mahasiswa.nilai')" :active="request()->routeIs('mahasiswa.nilai')">
                         {{ __('Hasil KP') }}
                     </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('mahasiswa.seminar.index')" :active="request()->routeIs('mahasiswa.seminar.*')">
+                        {{ __('Seminar') }}
+                    </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('mahasiswa.kuesioner.index')" :active="request()->routeIs('mahasiswa.kuesioner.*')">
                         {{ __('Kuesioner') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('mahasiswa.instansi.create')" :active="request()->routeIs('mahasiswa.instansi.*')">
+                        {{ __('Ajukan Instansi') }}
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('profile.edit')" :active="request()->routeIs('profile.edit')">
                         {{ __('Profil') }}

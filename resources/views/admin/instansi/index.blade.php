@@ -29,6 +29,7 @@
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Instansi</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kontak</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Verifikasi</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                                 </tr>
                             </thead>
@@ -52,7 +53,25 @@
                                                 </span>
                                             @endif
                                         </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            @php $v = $instansi->status_verifikasi ?? null; @endphp
+                                            @if($v === 'disetujui')
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-50 text-green-700">Disetujui</span>
+                                            @elseif($v === 'ditolak')
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-50 text-red-700">Ditolak</span>
+                                            @else
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-50 text-yellow-800">Pending</span>
+                                            @endif
+                                        </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            @if(($instansi->status_verifikasi ?? 'pending') === 'pending')
+                                                <form method="POST" action="{{ route('admin.instansi.verify', $instansi) }}" class="inline">@csrf
+                                                    <button class="text-green-600 hover:underline mr-2">Setujui</button>
+                                                </form>
+                                                <form method="POST" action="{{ route('admin.instansi.reject', $instansi) }}" class="inline">@csrf
+                                                    <button class="text-red-600 hover:underline mr-3">Tolak</button>
+                                                </form>
+                                            @endif
                                             
                                             <a href="{{ route('admin.instansi.edit', $instansi) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
                                             <form method="POST" action="{{ route('admin.instansi.destroy', $instansi) }}" class="inline">

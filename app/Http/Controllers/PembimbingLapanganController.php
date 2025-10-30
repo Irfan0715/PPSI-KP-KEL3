@@ -34,12 +34,24 @@ class PembimbingLapanganController extends Controller
             'nilai_lapangan' => 'nullable|numeric|min:0|max:100',
         ]);
 
-        Nilai::create([
+        $nilai = Nilai::create([
             'mahasiswa_id' => $validated['mahasiswa_id'],
             'dosen_id' => null,
             'pembimbing_lapangan_id' => auth()->id(),
             'nilai_lapangan' => $validated['nilai_lapangan'],
         ]);
+
+        // Sinkronkan ke KP (asumsikan mahasiswa_id merujuk ke tabel mahasiswas)
+        $m = \App\Models\Mahasiswa::find($validated['mahasiswa_id']);
+        if ($m) {
+            $kp = \App\Models\KerjaPraktek::where('mahasiswa_id', $m->user_id)
+                ->orderByDesc('created_at')->first();
+            if ($kp && !is_null($validated['nilai_lapangan'] ?? null)) {
+                $kp->nilai_pengawas_lapangan = $validated['nilai_lapangan'];
+                $kp->save();
+                $kp->hitungNilaiAkhir();
+            }
+        }
 
         return redirect()->route('lapangan.nilai.index')->with('success', 'Nilai lapangan ditambahkan.');
     }
@@ -56,6 +68,17 @@ class PembimbingLapanganController extends Controller
         ]);
 
         $nilai->update($validated);
+
+        $m = \App\Models\Mahasiswa::find($nilai->mahasiswa_id);
+        if ($m) {
+            $kp = \App\Models\KerjaPraktek::where('mahasiswa_id', $m->user_id)
+                ->orderByDesc('created_at')->first();
+            if ($kp && !is_null($validated['nilai_lapangan'] ?? null)) {
+                $kp->nilai_pengawas_lapangan = $validated['nilai_lapangan'];
+                $kp->save();
+                $kp->hitungNilaiAkhir();
+            }
+        }
 
         return redirect()->route('pembimbing-lapangan.nilai.index')->with('success', 'Nilai berhasil diperbarui.');
     }

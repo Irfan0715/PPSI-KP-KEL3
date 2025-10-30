@@ -130,6 +130,11 @@ Route::middleware(['auth', 'role:mahasiswa'])->prefix('mahasiswa')->name('mahasi
     Route::get('/kuesioner/{kuesioner}/edit', [MahasiswaController::class, 'editKuesioner'])->name('kuesioner.edit');
     Route::put('/kuesioner/{kuesioner}', [MahasiswaController::class, 'updateKuesioner'])->name('kuesioner.update');
     Route::delete('/kuesioner/{kuesioner}', [MahasiswaController::class, 'destroyKuesioner'])->name('kuesioner.destroy');
+
+    // Seminar (mahasiswa mengajukan jadwal)
+    Route::get('/seminar', [MahasiswaController::class, 'indexSeminar'])->name('seminar.index');
+    Route::get('/seminar/create', [MahasiswaController::class, 'createSeminar'])->name('seminar.create');
+    Route::post('/seminar', [MahasiswaController::class, 'storeSeminar'])->name('seminar.store');
 });
 
 // Dosen routes
@@ -234,3 +239,14 @@ if (app()->environment(['local', 'development'])) {
         ]);
     })->name('dev.create-admin');
 }
+
+// Tambahan routes: Usulan Instansi (Mahasiswa) & Verifikasi (Admin)
+Route::middleware(['auth','role:mahasiswa'])->prefix('mahasiswa')->name('mahasiswa.')->group(function(){
+    Route::get('/instansi/create', [MahasiswaController::class, 'createInstansi'])->name('instansi.create');
+    Route::post('/instansi', [MahasiswaController::class, 'storeInstansi'])->name('instansi.store');
+});
+
+Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group(function(){
+    Route::post('/instansi/{instansi}/verify', [AdminController::class, 'verifyInstansi'])->name('instansi.verify');
+    Route::post('/instansi/{instansi}/reject', [AdminController::class, 'rejectInstansi'])->name('instansi.reject');
+});

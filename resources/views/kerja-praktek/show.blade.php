@@ -140,7 +140,7 @@
                             Kembali
                         </a>
 
-                        @if(auth()->user()->hasAnyRole(['admin', 'dosen-biasa']) && $kerjaPraktek->status === 'diajukan')
+                        @if(auth()->user()->hasAnyRole(['admin', 'dosen', 'dosen-biasa']) && $kerjaPraktek->status === 'diajukan')
                             <div class="space-x-2">
                                 <form action="{{ route('kerja-praktek.approve', $kerjaPraktek) }}" method="POST" class="inline">
                                     @csrf
@@ -153,6 +153,28 @@
                                     <input type="text" name="alasan_penolakan" placeholder="Alasan penolakan" required>
                                     <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
                                         Tolak
+                                    </button>
+                                </form>
+                            </div>
+                        @endif
+
+                        @if(auth()->user()->hasAnyRole(['admin', 'dosen', 'dosen-biasa']) && $kerjaPraktek->status === 'disetujui')
+                            <div class="space-x-2">
+                                <form action="{{ route('kerja-praktek.start', $kerjaPraktek) }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                        Mulai KP
+                                    </button>
+                                </form>
+                            </div>
+                        @endif
+
+                        @if(auth()->user()->hasAnyRole(['admin', 'dosen', 'dosen-biasa']) && $kerjaPraktek->status === 'berlangsung')
+                            <div class="space-x-2">
+                                <form action="{{ route('kerja-praktek.complete', $kerjaPraktek) }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
+                                        Selesaikan KP
                                     </button>
                                 </form>
                             </div>

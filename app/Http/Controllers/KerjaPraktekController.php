@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Proposal;
+use App\Models\Mahasiswa;
 
 class KerjaPraktekController extends Controller
 {
@@ -225,6 +227,35 @@ class KerjaPraktekController extends Controller
 
         $kerjaPraktek->update(['status' => 'diajukan']);
 
+        // Sinkronkan proposal agar muncul di Validasi Proposal dosen pembimbing
+        try {
+            $mhs = Mahasiswa::where('user_id', $kerjaPraktek->mahasiswa_id)->first();
+            if (!$mhs) {
+                $mhs = Mahasiswa::create([
+                    'user_id' => $kerjaPraktek->mahasiswa_id,
+                    'nim' => '', 'prodi' => '', 'angkatan' => (int) now()->format('Y')
+                ]);
+            }
+            $proposal = Proposal::firstOrCreate(
+                [
+                    'mahasiswa_id' => $mhs->id,
+                    'judul' => $kerjaPraktek->judul_kp ?? 'Judul KP',
+                ],
+                [
+                    'file_proposal' => '',
+                    'status' => 'pending',
+                    'status_validasi' => 'pending',
+                    'tanggal_upload' => now(),
+                ]
+            );
+            if (!$proposal->dosen_id && !empty($kerjaPraktek->dosen_pembimbing_id)) {
+                $proposal->dosen_id = $kerjaPraktek->dosen_pembimbing_id;
+                $proposal->save();
+            }
+        } catch (\Throwable $e) {
+            // abaikan supaya submit tetap sukses
+        }
+
         return redirect()->route('kerja-praktek.show', $kerjaPraktek)
             ->with('success', 'Pendaftaran KP berhasil diajukan untuk disetujui');
     }
@@ -236,7 +267,7 @@ class KerjaPraktekController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user->hasAnyRole(['admin', 'dosen-biasa']) || !$this->canApproveKerjaPraktek($kerjaPraktek)) {
+        if (!$user->hasAnyRole(['admin', 'dosen', 'dosen-biasa']) || !$this->canApproveKerjaPraktek($kerjaPraktek)) {
             abort(403, 'Tidak memiliki akses untuk menyetujui');
         }
 
@@ -252,7 +283,7 @@ class KerjaPraktekController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user->hasAnyRole(['admin', 'dosen-biasa']) || !$this->canApproveKerjaPraktek($kerjaPraktek)) {
+        if (!$user->hasAnyRole(['admin', 'dosen', 'dosen-biasa']) || !$this->canApproveKerjaPraktek($kerjaPraktek)) {
             abort(403, 'Tidak memiliki akses untuk menolak');
         }
 
@@ -399,7 +430,7 @@ class KerjaPraktekController extends Controller
         $user = Auth::user();
 
         return $user->hasRole('admin') ||
-               ($user->hasRole('dosen-biasa') && $kerjaPraktek->dosen_pembimbing_id === $user->id);
+               ($user->hasAnyRole(['dosen','dosen-biasa']) && $kerjaPraktek->dosen_pembimbing_id === $user->id);
     }
 
     private function canManageKerjaPraktek(KerjaPraktek $kerjaPraktek)

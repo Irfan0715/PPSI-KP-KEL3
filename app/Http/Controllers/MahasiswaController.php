@@ -11,6 +11,7 @@ use App\Models\Bimbingan;
 use App\Models\Laporan;
 use App\Models\Nilai;
 use App\Models\Kuesioner;
+use App\Models\Instansi;
 use Illuminate\Http\Request;
 
 class MahasiswaController extends Controller
@@ -132,8 +133,16 @@ class MahasiswaController extends Controller
     // CRUD Bimbingan (catatan konsultasi)
     public function indexBimbingan()
     {
-        $mahasiswa = auth()->user()->mahasiswa;
-        $bimbingans = $mahasiswa->bimbingans;
+        // Adaptif: jika skema baru (mahasiswa_id mengacu ke users), ambil via user id
+        if (\Illuminate\Support\Facades\Schema::hasColumn('bimbingans', 'dosen_pembimbing_id')) {
+            $bimbingans = \App\Models\Bimbingan::where('mahasiswa_id', auth()->id())
+                ->orderByDesc('tanggal_bimbingan')
+                ->orderByDesc('created_at')
+                ->get();
+        } else {
+            $mahasiswa = auth()->user()->mahasiswa;
+            $bimbingans = $mahasiswa ? $mahasiswa->bimbingans : collect();
+        }
         return view('mahasiswa.bimbingan.index', compact('bimbingans'));
     }
 
@@ -145,21 +154,29 @@ class MahasiswaController extends Controller
     public function storeBimbingan(Request $request)
     {
         $validated = $request->validate([
-            'dosen_id' => 'required|exists:dosens,id',
+            'dosen' => 'nullable|integer', // fleksibel: user id dosen pembimbing
             'catatan' => 'required|string',
             'tanggal' => 'required|date',
-            'status' => 'required|in:terjadwal,berlangsung,selesai,dibatalkan',
+            'status' => 'required|in:terjadwal,berlangsung,selesai,dibatalkan,pending',
         ]);
 
-        $mahasiswa = auth()->user()->mahasiswa;
-
-        Bimbingan::create([
-            'mahasiswa_id' => $mahasiswa->id,
-            'dosen_id' => $validated['dosen_id'],
+        // Pemetaan kolom untuk dua skema
+        $data = [
             'catatan' => $validated['catatan'],
-            'tanggal' => $validated['tanggal'],
             'status' => $validated['status'],
-        ]);
+        ];
+        if (\Illuminate\Support\Facades\Schema::hasColumn('bimbingans', 'dosen_pembimbing_id')) {
+            $data['mahasiswa_id'] = auth()->id();
+            $data['dosen_pembimbing_id'] = $validated['dosen'] ?? auth()->user()->dosen_pembimbing_id ?? null;
+            $data['tanggal_bimbingan'] = $validated['tanggal'];
+        } else {
+            $mahasiswa = auth()->user()->mahasiswa;
+            $data['mahasiswa_id'] = $mahasiswa ? $mahasiswa->id : null;
+            $data['dosen_id'] = $validated['dosen'];
+            $data['tanggal'] = $validated['tanggal'];
+        }
+
+        \App\Models\Bimbingan::create($data);
 
         return redirect()->route('mahasiswa.bimbingan.index')->with('success', 'Bimbingan berhasil dibuat.');
     }
@@ -172,13 +189,25 @@ class MahasiswaController extends Controller
     public function updateBimbingan(Request $request, Bimbingan $bimbingan)
     {
         $validated = $request->validate([
-            'dosen_id' => 'required|exists:dosens,id',
+            'dosen' => 'nullable|integer',
             'catatan' => 'required|string',
             'tanggal' => 'required|date',
-            'status' => 'required|in:terjadwal,berlangsung,selesai,dibatalkan',
+            'status' => 'required|in:terjadwal,berlangsung,selesai,dibatalkan,pending',
         ]);
 
-        $bimbingan->update($validated);
+        $payload = [
+            'catatan' => $validated['catatan'],
+            'status' => $validated['status'],
+        ];
+        if (\Illuminate\Support\Facades\Schema::hasColumn('bimbingans', 'dosen_pembimbing_id')) {
+            $payload['dosen_pembimbing_id'] = $validated['dosen'] ?? $bimbingan->dosen_pembimbing_id;
+            $payload['tanggal_bimbingan'] = $validated['tanggal'];
+        } else {
+            $payload['dosen_id'] = $validated['dosen'] ?? $bimbingan->dosen_id;
+            $payload['tanggal'] = $validated['tanggal'];
+        }
+
+        $bimbingan->update($payload);
 
         return redirect()->route('mahasiswa.bimbingan.index')->with('success', 'Bimbingan berhasil diperbarui.');
     }
@@ -328,5 +357,100 @@ class MahasiswaController extends Controller
     {
         $kuesioner->delete();
         return redirect()->route('mahasiswa.kuesioner.index')->with('success', 'Kuesioner berhasil dihapus.');
+    }
+
+    // Usulan Instansi (verifikasi oleh admin)
+    public function createInstansi()
+    {
+        return view('mahasiswa.instansi.create');
+    }
+
+    public function storeInstansi(Request $request)
+    {
+        $validated = $request->validate([
+            'nama_instansi' => 'required|string|max:255',
+            'alamat' => 'required|string',
+            'kontak' => 'nullable|string|max:255',
+            'email' => 'nullable|email',
+            'website' => 'nullable|url',
+        ]);
+
+        $data = [
+            'nama_instansi' => $validated['nama_instansi'],
+            'alamat' => $validated['alamat'],
+            'status_verifikasi' => 'pending',
+        ];
+        if (!empty($validated['kontak'])) $data['kontak'] = $validated['kontak'];
+        if (!empty($validated['email'])) $data['email'] = $validated['email'];
+        if (!empty($validated['website'])) $data['website'] = $validated['website'];
+
+        Instansi::create($data);
+
+        return redirect()->route('mahasiswa.instansi.create')->with('success','Usulan instansi dikirim dan menunggu verifikasi admin.');
+    }
+
+    // Seminar: daftar dan pengajuan oleh mahasiswa
+    public function indexSeminar()
+    {
+        $user = auth()->user();
+        $seminars = Seminar::where('mahasiswa_id', $user->id)
+            ->orderByDesc('created_at')
+            ->get();
+        return view('mahasiswa.seminar.index', compact('seminars'));
+    }
+
+    public function createSeminar()
+    {
+        $kp = KerjaPraktek::where('mahasiswa_id', auth()->id())
+            ->whereIn('status', ['disetujui','berlangsung'])
+            ->latest()->first();
+        if (!$kp) {
+            return redirect()->route('mahasiswa.seminar.index')
+                ->with('error', 'Anda belum memiliki KP aktif/disetujui.');
+        }
+        return view('mahasiswa.seminar.create', compact('kp'));
+    }
+
+    public function storeSeminar(Request $request)
+    {
+        $validated = $request->validate([
+            'judul_seminar' => 'required|string|max:255',
+            'abstrak' => 'nullable|string',
+            'tanggal_seminar' => 'required|date',
+            'metode' => 'required|in:offline,online',
+            'tempat' => 'nullable|string|max:255',
+            'link_online' => 'nullable|url',
+            'presentasi_file' => 'nullable|file|mimes:ppt,pptx,pdf|max:5120',
+        ]);
+
+        $kp = KerjaPraktek::where('mahasiswa_id', auth()->id())
+            ->whereIn('status', ['disetujui','berlangsung'])
+            ->latest()->first();
+        if (!$kp) {
+            return redirect()->route('mahasiswa.seminar.index')
+                ->with('error', 'KP aktif tidak ditemukan.');
+        }
+
+        $presentasiPath = null;
+        if ($request->hasFile('presentasi_file')) {
+            $presentasiPath = $request->file('presentasi_file')->store('seminar/presentasi', 'public');
+        }
+
+        Seminar::create([
+            'kerja_praktek_id' => $kp->id,
+            'mahasiswa_id' => auth()->id(),
+            'judul_seminar' => $validated['judul_seminar'],
+            'abstrak' => $validated['abstrak'] ?? null,
+            'tanggal_seminar' => $validated['tanggal_seminar'],
+            'metode' => $validated['metode'],
+            'tempat' => $validated['tempat'] ?? null,
+            'link_online' => $validated['link_online'] ?? null,
+            'presentasi_file' => $presentasiPath,
+            'pembimbing_penguji_id' => $kp->dosen_pembimbing_id,
+            'status' => 'diajukan',
+        ]);
+
+        return redirect()->route('mahasiswa.seminar.index')
+            ->with('success', 'Pengajuan seminar berhasil dibuat dan diteruskan ke dosen pembimbing.');
     }
 }

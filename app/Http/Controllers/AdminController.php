@@ -316,6 +316,25 @@ class AdminController extends Controller
         return redirect()->route('admin.instansi.index')->with('success', 'Instansi berhasil dihapus.');
     }
 
+    // Verifikasi instansi usulan
+    public function verifyInstansi(Instansi $instansi)
+    {
+        $instansi->status_verifikasi = 'disetujui';
+        if (Schema::hasColumn('instansis','status')) $instansi->status = true;
+        if (Schema::hasColumn('instansis','status_aktif')) $instansi->status_aktif = true;
+        $instansi->save();
+        return back()->with('success','Instansi disetujui.');
+    }
+
+    public function rejectInstansi(Instansi $instansi)
+    {
+        $instansi->status_verifikasi = 'ditolak';
+        if (Schema::hasColumn('instansis','status')) $instansi->status = false;
+        if (Schema::hasColumn('instansis','status_aktif')) $instansi->status_aktif = false;
+        $instansi->save();
+        return back()->with('success','Instansi ditolak.');
+    }
+
     // CRUD LowonganKP
     public function indexLowongan()
     {
@@ -452,9 +471,22 @@ class AdminController extends Controller
 
         $kerjaPraktek->update(['dosen_pembimbing_id' => $validated['dosen_pembimbing_id']]);
 
+        // Jika KP masih diajukan, anggap penetapan pembimbing sebagai persetujuan
+        if ($kerjaPraktek->status === 'diajukan') {
+            $kerjaPraktek->update(['status' => 'disetujui']);
+        }
+
         // Sinkronkan juga proposal mahasiswa tersebut agar terindeks di dashboard dosen
         $mahasiswaUserId = $kerjaPraktek->mahasiswa_id; // user.id milik mahasiswa
         $mhs = \App\Models\Mahasiswa::where('user_id', $mahasiswaUserId)->first();
+        if (!$mhs) {
+            $mhs = \App\Models\Mahasiswa::create([
+                'user_id' => $mahasiswaUserId,
+                'nim' => '',
+                'prodi' => '',
+                'angkatan' => (int) now()->format('Y')
+            ]);
+        }
         if ($mhs) {
             // Set dosen_id untuk semua proposal mahasiswa tsb
             Proposal::where('mahasiswa_id', $mhs->id)

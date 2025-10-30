@@ -45,12 +45,16 @@ class Instansi extends Model
     public function scopeAktif($query)
     {
         $table = $this->getTable();
+        // Wajib: hanya instansi yang terverifikasi
+        if (Schema::hasColumn($table, 'status_verifikasi')) {
+            $query->where('status_verifikasi', 'disetujui');
+        }
+        // Aktif berdasarkan kolom status/status_aktif bila tersedia
         if (Schema::hasColumn($table, 'status')) {
-            return $query->where('status', true);
+            $query->where('status', true);
+        } elseif (Schema::hasColumn($table, 'status_aktif')) {
+            $query->where('status_aktif', true);
         }
-        if (Schema::hasColumn($table, 'status_aktif')) {
-            return $query->where('status_aktif', true);
-        }
-        return $query; // fallback: tidak filter jika kolom tidak ada
+        return $query;
     }
 }

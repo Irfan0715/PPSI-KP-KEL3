@@ -1,137 +1,269 @@
 <x-app-layout>
-    <div class="bg-gray-50 min-h-screen py-10">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
+    <x-slot name="header">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900">Dashboard Admin</h2>
+                <p class="mt-1 text-sm text-gray-500">Kelola fitur sistem kerja praktek secara terpusat.</p>
+            </div>
+        </div>
+    </x-slot>
 
-            <!-- Header -->
-            <header class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h2 class="text-2xl font-bold text-gray-900">Dashboard Admin</h2>
-                        <p class="mt-1 text-gray-500">Selamat datang, {{ auth()->user()->nama }}</p>
-                    </div>
-                </div>
-            </header>
+    <div class="bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
-            @php
-                $roles = collect($roleStats ?? []);
-                $adminCount = optional($roles->firstWhere('slug', 'admin'))->users_count ?? 0;
-                $dosenCount = optional($roles->firstWhere('slug', 'dosen'))->users_count ?? 0;
-                $mhsCount = optional($roles->firstWhere('slug', 'mahasiswa'))->users_count ?? 0;
-                $lapanganCount = optional($roles->firstWhere('slug', 'pembimbing_lapangan'))->users_count ?? 0;
-            @endphp
+            <!-- ================= MENU SECTIONS ================= -->
+            <section aria-labelledby="menu-heading">
+                <h3 id="menu-heading" class="sr-only">Menu</h3>
 
-            <!-- Statistik Role (dipindah ke bawah salam) -->
-            <section>
-                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                    <!-- Admin -->
-                    <div class="rounded-2xl p-6 text-center shadow-sm ring-1 ring-blue-100 bg-blue-50">
-                        <div class="text-2xl">👑</div>
-                        <h4 class="mt-2 font-semibold text-blue-900">Admin</h4>
-                        <p class="mt-1 text-2xl font-bold text-blue-900">{{ $adminCount }}</p>
-                        <p class="text-xs text-blue-700">pengguna</p>
-                    </div>
-                    <!-- Dosen -->
-                    <div class="rounded-2xl p-6 text-center shadow-sm ring-1 ring-emerald-100 bg-emerald-50">
-                        <div class="text-2xl">👨‍🏫</div>
-                        <h4 class="mt-2 font-semibold text-emerald-900">Dosen</h4>
-                        <p class="mt-1 text-2xl font-bold text-emerald-900">{{ $dosenCount }}</p>
-                        <p class="text-xs text-emerald-700">pengguna</p>
-                    </div>
-                    <!-- Mahasiswa -->
-                    <div class="rounded-2xl p-6 text-center shadow-sm ring-1 ring-violet-100 bg-violet-50">
-                        <div class="text-2xl">🎓</div>
-                        <h4 class="mt-2 font-semibold text-violet-900">Mahasiswa</h4>
-                        <p class="mt-1 text-2xl font-bold text-violet-900">{{ $mhsCount }}</p>
-                        <p class="text-xs text-violet-700">pengguna</p>
-                    </div>
-                    <!-- Pengawas Lapangan -->
-                    <div class="rounded-2xl p-6 text-center shadow-sm ring-1 ring-amber-100 bg-amber-50">
-                        <div class="text-2xl">🧑‍💼</div>
-                        <h4 class="mt-2 font-semibold text-amber-900">Pengawas Lapangan</h4>
-                        <p class="mt-1 text-2xl font-bold text-amber-900">{{ $lapanganCount }}</p>
-                        <p class="text-xs text-amber-700">pengguna</p>
-                    </div>
-                </div>
-            </section>
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    <!-- ========== MENU ADMIN ========== -->
+                    <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                        <div class="mb-4">
+                            <h4 class="text-lg font-semibold text-gray-900">Menu Admin</h4>
+                        </div>
 
-            <!-- Menu (2 kolom) -->
-            <section class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-                    <h3 class="mb-4 text-base font-semibold text-gray-900">Menu Administrasi</h3>
-                    <div class="space-y-3">
-                        <a href="{{ route('admin.users') }}" class="flex items-start justify-between rounded-xl border border-gray-100 bg-blue-50/60 p-4 hover:bg-blue-50 transition">
-                            <div class="flex items-start gap-3">
-                                <span class="text-xl">👥</span>
+                        <ul class="space-y-3">
+                            <!-- Manajemen Users -->
+                            <li>
+                                <a href="{{ route('admin.users') }}"
+                                   class="group block rounded-xl border border-gray-200 p-4 transition
+                                          hover:border-blue-300 hover:bg-blue-50/60
+                                          focus:outline-none focus-visible:ring focus-visible:ring-blue-400">
+                                    <div class="flex items-start justify-between gap-3">
+                                        <div>
+                                            <p class="font-medium text-gray-900 group-hover:text-blue-700">
+                                                Manajemen Users
+                                            </p>
+                                            <p class="text-sm text-gray-500">Kelola pengguna sistem</p>
+                                        </div>
+                                        <div class="mt-1 text-blue-600">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                 class="h-5 w-5" fill="none"
+                                                 viewBox="0 0 24 24"
+                                                 stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                      d="M9 5l7 7-7 7" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+
+                            <!-- Manajemen Instansi -->
+                            <li>
+                                <a href="{{ route('admin.instansi.index') }}"
+                                   class="group block rounded-xl border border-gray-200 p-4 transition
+                                          hover:border-emerald-300 hover:bg-emerald-50/60
+                                          focus:outline-none focus-visible:ring focus-visible:ring-emerald-400">
+                                    <div class="flex items-start justify-between gap-3">
+                                        <div>
+                                            <p class="font-medium text-gray-900 group-hover:text-emerald-700">
+                                                Manajemen Instansi
+                                            </p>
+                                            <p class="text-sm text-gray-500">Kelola instansi kerja praktek</p>
+                                        </div>
+                                        <div class="mt-1 text-emerald-600">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                 class="h-5 w-5" fill="none"
+                                                 viewBox="0 0 24 24"
+                                                 stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                      d="M9 5l7 7-7 7" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+
+                            <!-- Manajemen Lowongan KP -->
+                            <li>
+                                <a href="{{ route('admin.lowongan.index') }}"
+                                   class="group block rounded-xl border border-gray-200 p-4 transition
+                                          hover:border-amber-300 hover:bg-amber-50/60
+                                          focus:outline-none focus-visible:ring focus-visible:ring-amber-400">
+                                    <div class="flex items-start justify-between gap-3">
+                                        <div>
+                                            <p class="font-medium text-gray-900 group-hover:text-amber-700">
+                                                Manajemen Lowongan KP
+                                            </p>
+                                            <p class="text-sm text-gray-500">Kelola lowongan kerja praktek</p>
+                                        </div>
+                                        <div class="mt-1 text-amber-600">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                 class="h-5 w-5" fill="none"
+                                                 viewBox="0 0 24 24"
+                                                 stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                      d="M9 5l7 7-7 7" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+
+                            <!-- Alokasi Dosen -->
+                            <li>
+                                <a href="{{ route('admin.alokasi.pembimbing') }}"
+                                   class="group block rounded-xl border border-gray-200 p-4 transition
+                                          hover:border-pink-300 hover:bg-pink-50/60
+                                          focus:outline-none focus-visible:ring focus-visible:ring-pink-400">
+                                    <div class="flex items-start justify-between gap-3">
+                                        <div>
+                                            <p class="font-medium text-gray-900 group-hover:text-pink-700">
+                                                Alokasi Dosen Pembimbing & Penguji
+                                            </p>
+                                            <p class="text-sm text-gray-500">
+                                                Atur alokasi dosen pembimbing dan penguji
+                                            </p>
+                                        </div>
+                                        <div class="mt-1 text-pink-600">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                 class="h-5 w-5" fill="none"
+                                                 viewBox="0 0 24 24"
+                                                 stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                      d="M9 5l7 7-7 7" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- ========== MONITORING & LAPORAN ========== -->
+                    <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                        <div class="mb-4">
+                            <h4 class="text-lg font-semibold text-gray-900">Monitoring & Laporan</h4>
+                        </div>
+
+                        <ul class="space-y-3">
+                            <!-- Monitoring KP -->
+                            <li>
+                                <a href="{{ route('admin.monitoring') }}"
+                                   class="group block rounded-xl border border-gray-200 p-4 transition
+                                          hover:border-purple-300 hover:bg-purple-50/60
+                                          focus:outline-none focus-visible:ring focus-visible:ring-purple-400">
+                                    <div class="flex items-start justify-between gap-3">
+                                        <div>
+                                            <p class="font-medium text-gray-900 group-hover:text-purple-700">
+                                                Monitoring KP
+                                            </p>
+                                            <p class="text-sm text-gray-500">Pantau progress kerja praktek</p>
+                                        </div>
+                                        <div class="mt-1 text-purple-600">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                 class="h-5 w-5" fill="none"
+                                                 viewBox="0 0 24 24"
+                                                 stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                      d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+
+                            <!-- Manajemen Kuota -->
+                            <li>
+                                <a href="{{ route('admin.kuota.index') }}"
+                                   class="group block rounded-xl border border-gray-200 p-4 transition
+                                          hover:border-indigo-300 hover:bg-indigo-50/60
+                                          focus:outline-none focus-visible:ring focus-visible:ring-indigo-400">
+                                    <div class="flex items-start justify-between gap-3">
+                                        <div>
+                                            <p class="font-medium text-gray-900 group-hover:text-indigo-700">
+                                                Manajemen Kuota
+                                            </p>
+                                            <p class="text-sm text-gray-500">Kelola kuota kerja praktek</p>
+                                        </div>
+                                        <div class="mt-1 text-indigo-600">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                 class="h-5 w-5" fill="none"
+                                                 viewBox="0 0 24 24"
+                                                 stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- ========== STATISTIK & RINGKASAN ========== -->
+                    <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm md:col-span-2 lg:col-span-1">
+                        <div class="mb-4">
+                            <h4 class="text-lg font-semibold text-gray-900">Statistik & Ringkasan</h4>
+                        </div>
+
+                        <div class="space-y-4">
+                            <!-- Total Users -->
+                            <div class="flex items-center justify-between p-4 rounded-xl bg-blue-50 border border-blue-200">
                                 <div>
-                                    <p class="font-medium text-gray-900">Kelola Pengguna</p>
-                                    <p class="text-sm text-gray-600">Tambah, edit, dan hapus pengguna</p>
+                                    <p class="text-sm font-medium text-blue-900">Total Users</p>
+                                    <p class="text-2xl font-bold text-blue-700">{{ \App\Models\User::count() }}</p>
+                                </div>
+                                <div class="text-blue-600">
+                                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                                    </svg>
                                 </div>
                             </div>
-                            <span class="text-blue-600">→</span>
-                        </a>
-                        <a href="{{ route('admin.monitoring') }}" class="flex items-start justify-between rounded-xl border border-gray-100 bg-emerald-50/60 p-4 hover:bg-emerald-50 transition">
-                            <div class="flex items-start gap-3">
-                                <span class="text-xl">📊</span>
-                                <div>
-                                    <p class="font-medium text-gray-900">Monitor KP</p>
-                                    <p class="text-sm text-gray-600">Pantau progres dan ringkasan KP</p>
-                                </div>
-                            </div>
-                            <span class="text-emerald-600">→</span>
-                        </a>
-                    </div>
-                </div>
-                <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-                    <h3 class="mb-4 text-base font-semibold text-gray-900">Menu Data</h3>
-                    <div class="space-y-3">
-                        <a href="{{ route('admin.instansi.index') }}" class="flex items-start justify-between rounded-xl border border-gray-100 bg-purple-50/60 p-4 hover:bg-purple-50 transition">
-                            <div class="flex items-start gap-3">
-                                <span class="text-xl">🏢</span>
-                                <div>
-                                    <p class="font-medium text-gray-900">Instansi</p>
-                                    <p class="text-sm text-gray-600">Kelola data instansi KP</p>
-                                </div>
-                            </div>
-                            <span class="text-purple-600">→</span>
-                        </a>
-                        <a href="{{ route('admin.lowongan.index') }}" class="flex items-start justify-between rounded-xl border border-gray-100 bg-amber-50/60 p-4 hover:bg-amber-50 transition">
-                            <div class="flex items-start gap-3">
-                                <span class="text-xl">🧾</span>
-                                <div>
-                                    <p class="font-medium text-gray-900">Lowongan KP</p>
-                                    <p class="text-sm text-gray-600">Kelola lowongan dan kuota</p>
-                                </div>
-                            </div>
-                            <span class="text-amber-600">→</span>
-                        </a>
-                    </div>
-                </div>
-            </section>
 
-            <!-- Statistik Role Detail dipindah ke atas; bagian ini dihapus -->
+                            <!-- Total Instansi -->
+                            <div class="flex items-center justify-between p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+                                <div>
+                                    <p class="text-sm font-medium text-emerald-900">Total Instansi</p>
+                                    <p class="text-2xl font-bold text-emerald-700">{{ \App\Models\Instansi::count() }}</p>
+                                </div>
+                                <div class="text-emerald-600">
+                                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                    </svg>
+                                </div>
+                            </div>
 
-            <!-- Informasi & Pengumuman -->
-            <section class="space-y-4">
-                <h3 class="text-sm font-semibold uppercase tracking-wide text-gray-600">Informasi & Pengumuman</h3>
-                <div class="rounded-2xl border border-blue-100 bg-blue-50 p-5 text-blue-800 shadow-sm">
-                    <div class="flex items-start gap-3">
-                        <div class="text-xl">📣</div>
-                        <div>
-                            <p class="font-semibold">Selamat datang di dashboard Admin!</p>
-                            <p class="text-sm">Anda memiliki akses penuh untuk mengelola sistem KP. Pastikan semua pengguna memiliki role yang sesuai.</p>
+                            <!-- Total KP Aktif -->
+                            <div class="flex items-center justify-between p-4 rounded-xl bg-amber-50 border border-amber-200">
+                                <div>
+                                    <p class="text-sm font-medium text-amber-900">KP Aktif</p>
+                                    <p class="text-2xl font-bold text-amber-700">{{ \App\Models\KerjaPraktek::where('status', 'aktif')->count() }}</p>
+                                </div>
+                                <div class="text-amber-600">
+                                    <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="rounded-2xl border border-amber-100 bg-amber-50 p-5 text-amber-800 shadow-sm">
-                    <div class="flex items-start gap-3">
-                        <div class="text-xl">💡</div>
-                        <div>
-                            <p class="font-semibold">Tips Pengelolaan Sistem</p>
-                            <ul class="mt-1 list-disc pl-5 text-sm">
-                                <li>Pastikan setiap pengguna memiliki role yang tepat.</li>
-                                <li>Monitor aktivitas KP secara berkala melalui menu Monitoring.</li>
-                                <li>Update data instansi dan lowongan secara rutin.</li>
-                            </ul>
+            </section>
+
+            <!-- ================= INFORMASI & PENGUMUMAN ================= -->
+            <section aria-labelledby="info-heading">
+                <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                    <div class="mb-4">
+                        <h4 id="info-heading" class="text-lg font-semibold text-gray-900">
+                            Informasi & Pengumuman
+                        </h4>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="rounded-xl border border-blue-200 bg-blue-50 p-4">
+                            <p class="font-medium text-blue-900">Selamat datang di Dashboard Admin!</p>
+                            <p class="text-sm text-blue-800">
+                                Gunakan menu di atas untuk mengakses fitur-fitur sistem kerja praktek.
+                            </p>
+                        </div>
+
+                        <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+                            <p class="font-medium text-emerald-900">Pastikan data selalu diperbarui.</p>
+                            <p class="text-sm text-emerald-800">
+                                Periksa dan kelola data instansi, lowongan, dan kuota secara berkala.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -140,3 +272,4 @@
         </div>
     </div>
 </x-app-layout>
+

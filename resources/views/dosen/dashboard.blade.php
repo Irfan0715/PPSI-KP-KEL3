@@ -1,34 +1,98 @@
 <x-app-layout>
-    <div class="min-h-screen bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-            <!-- Header modern (selaras admin) -->
-            <header class="bg-white rounded-xl shadow-sm border border-gray-100">
-                <div class="px-6 py-5 flex items-center justify-between">
-                    <div>
-                        <h2 class="text-xl sm:text-2xl font-semibold tracking-tight text-gray-900">Dashboard Dosen</h2>
-                        <p class="text-sm text-gray-500 mt-1">Selamat datang, <span class="font-medium text-gray-700">{{ auth()->user()->name }}</span></p>
+    <!-- Header -->
+    <header class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 mb-6">
+        <div>
+            <h2 class="text-3xl font-bold text-gray-900">Dashboard Dosen</h2>
+            <p class="text-gray-500 mt-1">Selamat datang, {{ auth()->user()->nama }} 👋</p>
+        </div>
+    </header>
+
+    <!-- Statistik -->
+    <div class="mb-8">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+            <i class="bi bi-bar-chart-fill text-blue-600"></i> Statistik Sistem
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="p-6 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-2xl shadow-lg">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm">Total Mahasiswa</span>
+                    <i class="bi bi-people-fill text-2xl"></i>
+                </div>
+                <p class="text-4xl font-bold mt-2">{{ $totalMahasiswa ?? 0 }}</p>
+            </div>
+
+            <div class="p-6 bg-gradient-to-r from-green-400 to-emerald-500 text-white rounded-2xl shadow-lg">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm">KP Membimbing</span>
+                    <i class="bi bi-book text-2xl"></i>
+                </div>
+                <p class="text-4xl font-bold mt-2">{{ $kpMembimbingCount ?? 0 }}</p>
+            </div>
+
+            <div class="p-6 bg-gradient-to-r from-yellow-400 to-amber-500 text-gray-900 rounded-2xl shadow-lg">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm font-medium">Menunggu Approval</span>
+                    <i class="bi bi-clock text-2xl"></i>
+                </div>
+                <p class="text-4xl font-bold mt-2">{{ $pendingApprovalsCount ?? 0 }}</p>
+            </div>
+
+            <div class="p-6 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl shadow-lg">
+                <div class="flex justify-between items-center">
+                    <span class="text-sm">KP Selesai</span>
+                    <i class="bi bi-check-circle-fill text-2xl"></i>
+                </div>
+                <p class="text-4xl font-bold mt-2">{{ $completedKpCount ?? 0 }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manajemen -->
+    <div>
+        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+            <i class="bi bi-gear-fill text-indigo-600"></i> Manajemen
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <a href="{{ route('dosen.proposal.index') }}" class="group bg-white p-6 rounded-2xl shadow-md hover:shadow-lg border border-gray-100 transition transform hover:-translate-y-1">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="p-3 bg-blue-100 text-blue-600 rounded-xl group-hover:bg-blue-600 group-hover:text-white transition">
+                        <i class="bi bi-file-earmark-text text-xl"></i>
                     </div>
+                    <h4 class="text-lg font-semibold text-gray-800">Validasi Proposal</h4>
                 </div>
-            </header>
+                <p class="text-gray-500 text-sm">Review & setujui proposal mahasiswa</p>
+            </a>
 
-            <!-- Statistik cards -->
-            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <x-stat-card color="blue" label="Total Mahasiswa" :value="$totalMahasiswa ?? 0" />
-                <x-stat-card color="emerald" label="KP Membimbing" :value="$kpMembimbingCount ?? 0" />
-                <x-stat-card color="amber" label="Menunggu Approval" :value="$pendingApprovalsCount ?? 0" />
-                <x-stat-card color="indigo" label="KP Selesai" :value="$completedKpCount ?? 0" />
-            </section>
-
-            <!-- Manajemen grid -->
-            <section>
-                <h3 class="text-sm font-semibold text-gray-500 tracking-wide mb-3">Aksi Cepat</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <x-manage-card href="{{ route('dosen.proposal.index') }}" color="blue" title="Validasi Proposal" desc="Review & setujui" />
-                    <x-manage-card href="{{ route('dosen.bimbingan.index') }}" color="amber" title="Riwayat Bimbingan" desc="Catatan pertemuan" />
-                    <x-manage-card href="{{ route('dosen.nilai.index') }}" color="indigo" title="Nilai Pembimbing" desc="Input & perbarui" />
-                    <x-manage-card href="{{ route('dosen.seminar.index') }}" color="emerald" title="Penguji Seminar" desc="Penilaian seminar" />
+            <a href="{{ route('dosen.bimbingan.index') }}" class="group bg-white p-6 rounded-2xl shadow-md hover:shadow-lg border border-gray-100 transition transform hover:-translate-y-1">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="p-3 bg-green-100 text-green-600 rounded-xl group-hover:bg-green-600 group-hover:text-white transition">
+                        <i class="bi bi-chat-dots text-xl"></i>
+                    </div>
+                    <h4 class="text-lg font-semibold text-gray-800">Riwayat Bimbingan</h4>
                 </div>
-            </section>
+                <p class="text-gray-500 text-sm">Catatan pertemuan bimbingan</p>
+            </a>
+
+            <a href="{{ route('dosen.nilai.index') }}" class="group bg-white p-6 rounded-2xl shadow-md hover:shadow-lg border border-gray-100 transition transform hover:-translate-y-1">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="p-3 bg-yellow-100 text-yellow-600 rounded-xl group-hover:bg-yellow-500 group-hover:text-white transition">
+                        <i class="bi bi-star-fill text-xl"></i>
+                    </div>
+                    <h4 class="text-lg font-semibold text-gray-800">Nilai Pembimbing</h4>
+                </div>
+                <p class="text-gray-500 text-sm">Input & perbarui nilai mahasiswa</p>
+            </a>
+
+            <a href="{{ route('dosen.seminar.index') }}" class="group bg-white p-6 rounded-2xl shadow-md hover:shadow-lg border border-gray-100 transition transform hover:-translate-y-1">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="p-3 bg-purple-100 text-purple-600 rounded-xl group-hover:bg-purple-600 group-hover:text-white transition">
+                        <i class="bi bi-mic-fill text-xl"></i>
+                    </div>
+                    <h4 class="text-lg font-semibold text-gray-800">Penguji Seminar</h4>
+                </div>
+                <p class="text-gray-500 text-sm">Penilaian seminar mahasiswa</p>
+            </a>
         </div>
     </div>
 </x-app-layout>

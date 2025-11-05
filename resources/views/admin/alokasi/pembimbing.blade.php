@@ -22,7 +22,7 @@
                                     <th class="px-4 py-2 text-left">Mahasiswa</th>
                                     <th class="px-4 py-2 text-left">Instansi</th>
                                     <th class="px-4 py-2 text-left">Judul</th>
-                                    <th class="px-4 py-2 text-left">Pembimbing Saat Ini</th>
+                                    <th class="px-4 py-2 text-left">Pembimbing</th>
                                     <th class="px-4 py-2 text-left">Aksi</th>
                                 </tr>
                             </thead>

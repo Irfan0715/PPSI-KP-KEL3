@@ -1,257 +1,234 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIKP - Sistem Informasi Kerja Praktek - Universitas Bengkulu</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Custom Orange and Blue Palette */
-        :root {
-            --color-primary-blue: #2563EB; /* Blue-600 */
-            --color-primary-blue-dark: #1D4ED8; /* Blue-700 */
-            --color-accent-orange: #F97316; /* Orange-500 */
-            --color-accent-orange-dark: #EA580C; /* Orange-600 */
-            --color-light-bg: #F9FAFB; /* Gray-50 */
-        }
-        .bg-primary-blue { background-color: var(--color-primary-blue); }
-        .hover\:bg-primary-blue-dark:hover { background-color: var(--color-primary-blue-dark); }
-        .text-accent-orange { color: var(--color-accent-orange); }
-        .bg-accent-orange { background-color: var(--color-accent-orange); }
-        .hover\:bg-accent-orange-dark:hover { background-color: var(--color-accent-orange-dark); }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIKP UNIB - Sistem Informasi Kerja Praktek</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --primary-blue: #1a246a;
+      --accent-orange: #f97316;
+      --light-bg: #f9fafb;
+    }
 
-        /* Custom style for aspect ratio fix */
-        .aspect-w-16 { --tw-aspect-w: 16; }
-        .aspect-h-9 { --tw-aspect-h: 9; }
-        .aspect-w-16\/9 { aspect-ratio: 16 / 9; }
-    </style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--light-bg);
+    }
+
+    /* Animasi mengambang */
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0px); }
+    }
+    .float { animation: float 3s ease-in-out infinite; }
+
+    /* Smooth fade-in */
+    .fade-in {
+      animation: fadeIn 1.5s ease-in-out;
+    }
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    html { scroll-behavior: smooth; }
+
+    /* === NAVBAR UNDERLINE DARI TENGAH === */
+    .nav-link {
+      position: relative;
+      transition: color 0.3s ease;
+      padding-bottom: 2px;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0%;
+      height: 2px;
+      background-color: var(--primary-blue);
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after { width: 100%; }
+  </style>
 </head>
-<body class="font-sans bg-light-bg text-gray-800">
+<body class="text-gray-800">
 
-    <header class="sticky top-0 z-50 bg-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <a href="#" class="flex items-center space-x-2 flex-shrink-0">
-                    <svg class="h-8 w-8 text-primary-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 21.75l-4.5-7.5H4.5l7.5 7.5 7.5-7.5h-3L12 21.75zM12 2.25l4.5 7.5h3l-7.5-7.5-7.5 7.5h3l4.5-7.5z" />
-                    </svg>
-                    <span class="text-xl font-bold text-gray-900">SIKP <span class="text-accent-orange">UNIB</span></span>
-                </a>
+  <!-- ===== NAVBAR ===== -->
+  <header class="bg-white/90 backdrop-blur-md fixed w-full top-0 z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <img src="{{ asset('images/logo.png') }}" alt="Logo SIKP" class="w-9 h-9 object-contain" />
+        <span class="font-bold text-xl text-gray-800">
+          <span class="text-[var(--primary-blue)]">SIKP</span> <span class="text-[var(--accent-orange)]">UNIB</span>
+        </span>
+      </div>
+      <nav class="hidden md:flex space-x-8 text-gray-700">
+        <a href="#tentang" class="nav-link hover:text-[var(--primary-blue)]">Tentang</a>
+        <a href="#fitur" class="nav-link hover:text-[var(--primary-blue)]">Fitur</a>
+        <a href="#kontak" class="nav-link hover:text-[var(--primary-blue)]">Kontak</a>
+      </nav>
+      <a href="/login" class="bg-[var(--accent-orange)] hover:bg-orange-600 text-white px-5 py-2 rounded-lg shadow-md">Masuk</a>
+    </div>
+  </header>
 
-                <nav class="hidden md:flex space-x-10">
-                    <a href="#fitur" class="text-base font-medium text-gray-500 hover:text-primary-blue transition duration-150">Fitur Utama</a>
-                    <a href="#alur" class="text-base font-medium text-gray-500 hover:text-primary-blue transition duration-150">Alur KP</a>
-                    <a href="#kontak" class="text-base font-medium text-gray-500 hover:text-primary-blue transition duration-150">Kontak</a>
-                </nav>
+  <!-- ===== HERO SECTION ===== -->
+  <section class="pt-32 pb-16 bg-gradient-to-br from-blue-50 via-white to-orange-50 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col-reverse md:flex-row items-center gap-10 fade-in">
+      <div class="md:w-1/2 text-center md:text-left">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 leading-snug">
+          Sistem Informasi <br>
+          <span class="text-[var(--primary-blue)]">Kerja Praktek</span> Online
+        </h1>
+        <p class="mt-4 text-gray-600 text-lg">
+          Mudahkan proses pengajuan, bimbingan, dan laporan Kerja Praktek di Universitas Bengkulu dengan sistem digital yang cepat dan transparan.
+        </p>
+        <div class="mt-8 flex justify-center md:justify-start gap-4">
+          <a href="/register" class="bg-[var(--primary-blue)] hover:bg-blue-700 text-white px-6 py-3 rounded-lg shadow-md font-semibold transition transform hover:scale-105">Daftar Sekarang</a>
+          <a href="#fitur" class="border-2 border-[var(--primary-blue)] text-[var(--primary-blue)] hover:bg-blue-50 px-6 py-3 rounded-lg font-semibold transition transform hover:scale-105">Lihat Fitur</a>
+        </div>
+      </div>
 
-                <div class="flex items-center space-x-3 sm:space-x-4">
-                    <a href="/login" class="text-sm sm:text-base font-medium text-gray-500 hover:text-primary-blue transition duration-150 hidden sm:inline-block">Masuk</a>
-                    <a href="/register" class="px-3 py-1.5 sm:px-4 sm:py-2 border border-transparent rounded-md shadow-sm text-sm sm:text-base font-medium text-white bg-accent-orange hover:bg-accent-orange-dark transition duration-150">
-                        Daftar
-                    </a>
+      <div class="md:w-1/2 flex justify-center">
+        <img src="{{ asset('images/gambarlanding.png') }}" alt="Ilustrasi Landing" class="w-full max-w-md float" />
+      </div>
+    </div>
 
-                    <button class="md:hidden p-1 rounded-md text-gray-600 hover:text-primary-blue transition duration-150">
-                        <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                        </svg>
-                    </button>
-                </div>
+    <div class="absolute -bottom-1 left-0 right-0 overflow-hidden leading-[0]">
+      <svg viewBox="0 0 1440 120" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#1a246a" fill-opacity="1" d="M0,64L48,53.3C96,43,192,21,288,26.7C384,32,480,64,576,80C672,96,768,96,864,80C960,64,1056,32,1152,21.3C1248,11,1344,21,1392,26.7L1440,32L1440,120L0,120Z"></path>
+      </svg>
+    </div>
+  </section>
+  <!-- ===== TENTANG ===== -->
+  <section id="tentang" class="bg-[#1a246a] text-white py-16 relative">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="flex flex-col md:flex-row items-center gap-10">
+        <!-- Gambar kiri (tanpa frame + animasi floating) -->
+        <div class="md:w-1/2 flex justify-center md:-mt-10">
+          <img src="{{ asset('images/tentang.png') }}"
+               alt="Tentang SIKP"
+             />
+        </div>
+
+        <!-- Teks kanan -->
+        <div class="md:w-1/2 mt-6 md:mt-0">
+          <h2 class="text-3xl font-bold mb-4 text-white">Tentang SIKP UNIB</h2>
+          <p class="text-gray-200 leading-relaxed mb-3">
+            SIKP UNIB adalah sistem informasi terpadu yang dirancang untuk mempermudah mahasiswa Universitas Bengkulu dalam mengajukan, melaksanakan, serta melaporkan kegiatan Kerja Praktek secara daring.
+          </p>
+          <p class="text-gray-200 leading-relaxed">
+            Dengan SIKP, seluruh proses mulai dari pendaftaran, bimbingan dosen, hingga pengumpulan laporan dapat dilakukan secara efisien, transparan, dan terintegrasi dengan sistem akademik kampus.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gelombang pemisah halus ke section berikut -->
+    <div class="absolute -bottom-1 left-0 right-0 overflow-hidden leading-[0]">
+      <svg viewBox="0 0 1440 100" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#1a246a" fill-opacity="1"
+              d="M0,64L48,58.7C96,53,192,43,288,42.7C384,43,480,53,576,64C672,75,768,85,864,80C960,75,1056,53,1152,48C1248,43,1344,53,1392,58.7L1440,64L1440,0L0,0Z">
+        </path>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ===== FITUR ===== -->
+  <section id="fitur" class="py-14 bg-[#1a246a] -mt-6">
+    <div class="max-w-6xl mx-auto px-6 text-center">
+      <h2 class="text-3xl font-bold text-white mb-10">Fitur Unggulan</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <!-- Fitur 1 -->
+        <div class="bg-white text-[#1a246a] rounded-2xl p-8 shadow-lg transform transition duration-300 hover:-translate-y-3 hover:shadow-2xl hover:scale-105">
+          <div class="flex justify-center mb-6">
+            <div class="bg-[#1a246a] rounded-full w-16 h-16 flex items-center justify-center shadow-md">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-8 h-8">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M16.5 10.5V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25h12a2.25 2.25 0 002.25-2.25v-5.25M16.5 10.5l4.5-4.5m0 0L16.5 1.5m4.5 4.5H12" />
+              </svg>
             </div>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">Pendaftaran Online</h3>
+          <p>Ajukan Kerja Praktek tanpa datang ke kampus — cepat dan mudah digunakan di mana saja.</p>
         </div>
-        <div class="hidden md:hidden absolute w-full bg-white shadow-xl py-4 border-t border-gray-100">
-             <nav class="flex flex-col space-y-2 px-4">
-                <a href="#fitur" class="py-2 text-gray-600 hover:text-primary-blue">Fitur Utama</a>
-                <a href="#alur" class="py-2 text-gray-600 hover:text-primary-blue">Alur KP</a>
-                <a href="#kontak" class="py-2 text-gray-600 hover:text-primary-blue">Kontak</a>
-                <a href="/login" class="py-2 text-gray-600 hover:text-primary-blue sm:hidden">Masuk</a>
-            </nav>
-        </div>
-    </header>
 
-    <section class="bg-white pt-10 sm:pt-16 lg:pt-8 pb-12 sm:pb-16 lg:pb-24">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="lg:grid lg:grid-cols-12 lg:gap-12">
-                <div class="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left">
-                    <h1 class="text-3xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-5xl lg:text-6xl">
-                        <span class="block xl:inline">Sistem Informasi</span>
-                        <span class="block text-primary-blue xl:inline">Kerja Praktek</span>
-                    </h1>
-                    <p class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg lg:text-lg xl:text-xl">
-                        Kelola seluruh proses Kerja Praktek (KP) Anda, mulai dari pendaftaran, penentuan dosen pembimbing, hingga pelaporan akhir, dengan mudah dan terpusat di **Universitas Bengkulu**.
-                    </p>
-                    <div class="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                        <a href="/login" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-xl shadow-lg text-white bg-primary-blue hover:bg-primary-blue-dark transition duration-150 transform hover:scale-[1.03]">
-                            Mulai Sekarang
-                        </a>
-                        <a href="#alur" class="inline-flex items-center justify-center px-6 py-3 border border-primary-blue text-base font-medium rounded-xl text-primary-blue bg-white hover:bg-light-bg transition duration-150 transform hover:scale-[1.03]">
-                            Lihat Alur
-                        </a>
-                    </div>
-                </div>
-
-                <div class="mt-12 relative lg:mt-0 lg:col-span-6 hidden sm:block">
-                    <div class="relative w-full aspect-w-16/9">
-                        <div class="relative max-w-lg mx-auto lg:max-w-none">
-                            <div class="bg-accent-orange rounded-[2rem] p-6 shadow-xl transform rotate-3 scale-95 opacity-50 absolute inset-0 transition duration-300 hover:rotate-2"></div>
-                            <div class="bg-primary-blue rounded-[2rem] p-8 shadow-2xl relative transition duration-300 hover:-translate-y-1">
-                                <svg class="h-20 w-20 mx-auto text-white opacity-80" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                                </svg>
-                                <p class="mt-4 text-center text-2xl font-bold text-white tracking-wider">SIKP V2.0</p>
-                                <p class="text-center text-sm text-gray-200">Akses 24/7 untuk Mahasiswa & Dosen</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <!-- Fitur 2 -->
+        <div class="bg-white text-[#1a246a] rounded-2xl p-8 shadow-lg transform transition duration-300 hover:-translate-y-3 hover:shadow-2xl hover:scale-105">
+          <div class="flex justify-center mb-6">
+            <div class="bg-orange-500 rounded-full w-16 h-16 flex items-center justify-center shadow-md">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="w-8 h-8">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M15 12h.01M12 12h.01M9 12h.01M21 12c0 4.418-3.582 8-8 8H8.5a3.5 3.5 0 01-3.5-3.5V4.75A2.25 2.25 0 017.25 2.5h9.5A2.25 2.25 0 0119 4.75V12z" />
+              </svg>
             </div>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">Bimbingan Terintegrasi</h3>
+          <p>Pantau bimbingan dan revisi laporan langsung bersama dosen pembimbing melalui dashboard digital.</p>
         </div>
-    </section>
 
-    <hr class="max-w-7xl mx-auto border-gray-200">
-
-    <section id="fitur" class="py-16 sm:py-24 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center">
-                <h2 class="text-base text-accent-orange font-semibold tracking-wide uppercase">Efisiensi & Transparansi</h2>
-                <p class="mt-2 text-3xl font-extrabold text-gray-900 sm:text-4xl">
-                    Fitur Utama SIKP UNIB
-                </p>
+        <!-- Fitur 3 -->
+        <div class="bg-white text-[#1a246a] rounded-2xl p-8 shadow-lg transform transition duration-300 hover:-translate-y-3 hover:shadow-2xl hover:scale-105">
+          <div class="flex justify-center mb-6">
+            <div class="bg-[#1a246a] rounded-full w-16 h-16 flex items-center justify-center shadow-md">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke-width="1.5" stroke="white" class="w-8 h-8">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M9 17.25v1.5m6-1.5v1.5M3.75 9h16.5M4.5 4.5h15A2.25 2.25 0 0121.75 6.75v10.5A2.25 2.25 0 0119.5 19.5H4.5A2.25 2.25 0 012.25 17.25V6.75A2.25 2.25 0 014.5 4.5z" />
+              </svg>
             </div>
-
-            <div class="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
-
-                <div class="pt-6">
-                    <div class="flow-root bg-light-bg rounded-xl px-6 pb-8 shadow-md hover:shadow-xl h-full transition duration-300 transform hover:-translate-y-1">
-                        <div class="-mt-6">
-                            <div>
-                                <span class="inline-flex items-center justify-center p-3 bg-primary-blue rounded-full shadow-lg">
-                                    <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 18.291m-1.897-4.102a.75.75 0 00.046-.013L9.585 14.85l.013.046L15.3 15.3M8.25 15.75L12 12m0 0l4.5 4.5" />
-                                    </svg>
-                                </span>
-                            </div>
-                            <h3 class="mt-8 text-xl font-medium tracking-tight text-gray-900">Pendaftaran Cepat</h3>
-                            <p class="mt-5 text-base text-gray-500">
-                                Proses pengajuan Kerja Praktek yang 100% digital, tanpa perlu cetak berkas di awal. Ajukan di mana saja dan kapan saja.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="pt-6">
-                    <div class="flow-root bg-light-bg rounded-xl px-6 pb-8 shadow-md hover:shadow-xl h-full transition duration-300 transform hover:-translate-y-1">
-                        <div class="-mt-6">
-                            <div>
-                                <span class="inline-flex items-center justify-center p-3 bg-accent-orange rounded-full shadow-lg">
-                                    <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9 9 0 007.662-4.195 9 9 0 00-7.662 4.195z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3a9 9 0 00-7.662 4.195 9 9 0 007.662-4.195z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3a9 9 0 00-7.662 4.195 9 9 0 007.662-4.195z" />
-                                    </svg>
-                                </span>
-                            </div>
-                            <h3 class="mt-8 text-xl font-medium tracking-tight text-gray-900">Digital Logbook & Revisi</h3>
-                            <p class="mt-5 text-base text-gray-500">
-                                Catatan harian KP (Logbook) dan proses revisi laporan terintegrasi langsung dengan Dosen Pembimbing.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="pt-6">
-                    <div class="flow-root bg-light-bg rounded-xl px-6 pb-8 shadow-md hover:shadow-xl h-full transition duration-300 transform hover:-translate-y-1">
-                        <div class="-mt-6">
-                            <div>
-                                <span class="inline-flex items-center justify-center p-3 bg-primary-blue rounded-full shadow-lg">
-                                    <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25L12 20.25l-3.75-3.0m7.5-7.5l-1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 18.291m-1.897-4.102a.75.75 0 00.046-.013L9.585 14.85l.013.046L15.3 15.3M8.25 15.75L12 12m0 0l4.5 4.5" />
-                                    </svg>
-                                </span>
-                            </div>
-                            <h3 class="mt-8 text-xl font-medium tracking-tight text-gray-900">Status Real-Time</h3>
-                            <p class="mt-5 text-base text-gray-500">
-                                Pantau status pendaftaran, nama Dosen Pembimbing, dan nilai akhir KP Anda secara langsung dan akurat.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">Laporan Digital</h3>
+          <p>Unggah laporan akhir tanpa ribet dan pantau status revisi secara real-time kapan pun dibutuhkan.</p>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <section id="alur" class="bg-primary-blue py-16 sm:py-24">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-center text-base text-white font-semibold tracking-wide uppercase">Proses Digital</h2>
-            <p class="mt-2 text-3xl font-extrabold text-white text-center sm:text-4xl">
-                Alur Kerja Praktek di SIKP
-            </p>
 
-            <div class="mt-12 space-y-8 sm:space-y-12 max-w-xl mx-auto">
-
-                <div class="flex items-start">
-                    <div class="flex-shrink-0">
-                        <span class="h-10 w-10 flex items-center justify-center rounded-full bg-accent-orange text-white text-lg font-bold shadow-md">1</span>
-                    </div>
-                    <div class="ml-4">
-                        <h3 class="text-xl font-bold text-white">Pendaftaran Online</h3>
-                        <p class="mt-1 text-gray-200">Mahasiswa mengisi formulir digital dan mengunggah dokumen persyaratan awal ke sistem.</p>
-                    </div>
-                </div>
-
-                <div class="flex items-start">
-                    <div class="flex-shrink-0">
-                        <span class="h-10 w-10 flex items-center justify-center rounded-full bg-accent-orange text-white text-lg font-bold shadow-md">2</span>
-                    </div>
-                    <div class="ml-4">
-                        <h3 class="text-xl font-bold text-white">Penentuan Dosen Pembimbing</h3>
-                        <p class="mt-1 text-gray-200">Koordinator KP/Departemen menunjuk Dosen Pembimbing dan SK terbit di sistem.</p>
-                    </div>
-                </div>
-
-                <div class="flex items-start">
-                    <div class="flex-shrink-0">
-                        <span class="h-10 w-10 flex items-center justify-center rounded-full bg-accent-orange text-white text-lg font-bold shadow-md">3</span>
-                    </div>
-                    <div class="ml-4">
-                        <h3 class="text-xl font-bold text-white">Pelaksanaan & Bimbingan</h3>
-                        <p class="mt-1 text-gray-200">Mahasiswa mengisi logbook harian dan Dosen Pembimbing memvalidasi logbook serta memberikan bimbingan laporan via sistem.</p>
-                    </div>
-                </div>
-
-                <div class="flex items-start">
-                    <div class="flex-shrink-0">
-                        <span class="h-10 w-10 flex items-center justify-center rounded-full bg-accent-orange text-white text-lg font-bold shadow-md">4</span>
-                    </div>
-                    <div class="ml-4">
-                        <h3 class="text-xl font-bold text-white">Penilaian Akhir</h3>
-                        <p class="mt-1 text-gray-200">Dosen Pembimbing dan Pihak Mitra memberikan nilai yang akan direkap otomatis oleh SIKP.</p>
-                    </div>
-                </div>
-
-            </div>
+  <!-- ===== FOOTER ===== -->
+  <footer id="kontak" class="bg-[#111827] text-gray-300 pt-14 pb-8 w-full">
+    <div class="w-full px-6 md:px-16">
+      <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-10 items-start text-center md:text-left">
+        <div class="flex flex-col items-center md:items-start space-y-3">
+          <div class="flex items-center space-x-3">
+            <img src="{{ asset('images/logo.png') }}" alt="Logo SIKP" class="w-10 h-10 object-contain">
+            <h3 class="text-xl font-bold text-white">
+              <span class="text-white">SIKP</span>
+              <span class="text-[#f97316]">UNIB</span>
+            </h3>
+          </div>
+          <p class="text-gray-400 text-sm leading-relaxed max-w-xs">
+            Sistem Informasi Kerja Praktek Universitas Bengkulu — mempermudah mahasiswa dalam seluruh proses KP secara digital.
+          </p>
         </div>
-    </section>
 
-    <footer id="kontak" class="bg-gray-800 text-white">
-        <div class="max-w-7xl mx-auto py-12 px-4 overflow-hidden sm:px-6 lg:px-8">
-            <nav class="-mx-5 -my-2 flex flex-wrap justify-center" aria-label="Footer">
-                <div class="px-5 py-2">
-                    <a href="#fitur" class="text-base text-gray-400 hover:text-white transition duration-150">Fitur</a>
-                </div>
-                <div class="px-5 py-2">
-                    <a href="#alur" class="text-base text-gray-400 hover:text-white transition duration-150">Alur KP</a>
-                </div>
-                <div class="px-5 py-2">
-                    <a href="https://unib.ac.id" target="_blank" class="text-base text-gray-400 hover:text-white transition duration-150">Portal UNIB</a>
-                </div>
-            </nav>
-            <p class="mt-8 text-center text-base text-gray-400">
-                &copy; 2024 SIKP Universitas Bengkulu. Dikelola oleh Departemen.
-            </p>
+        <div class="space-y-3">
+          <h4 class="text-white font-semibold mb-2">Navigasi</h4>
+          <ul class="space-y-2">
+            <li><a href="#tentang" class="hover:text-white transition">Tentang</a></li>
+            <li><a href="#fitur" class="hover:text-white transition">Fitur</a></li>
+            <li><a href="#alur" class="hover:text-white transition">Alur KP</a></li>
+            <li><a href="https://unib.ac.id" target="_blank" class="hover:text-white transition">Portal UNIB</a></li>
+          </ul>
         </div>
-    </footer>
 
+        <div class="flex flex-col items-center md:items-end space-y-3">
+          <h4 class="text-white font-semibold mb-2">Kontak</h4>
+          <p class="text-sm text-gray-400">
+            Email: <a href="mailto:sikp@unib.ac.id" class="text-[#f97316] hover:underline">sikp@unib.ac.id</a>
+          </p>
+        </div>
+      </div>
+
+      <div class="border-t border-gray-700 mt-10 pt-6 text-center text-sm text-gray-500">
+        &copy; 2025 SIKP Universitas Bengkulu. Semua hak dilindungi.
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
